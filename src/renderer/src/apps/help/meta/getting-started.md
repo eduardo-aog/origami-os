@@ -22,7 +22,7 @@ El primer ícono del Dock abre el Launchpad, que muestra todas las aplicaciones.
 
 ## Las ventanas
 
-Cada ventana tiene tres botones a la izquierda: el rojo la cierra, el amarillo la minimiza hacia el Dock y el verde la maximiza. También puedes hacer **doble clic en la barra de título** para maximizar o restaurar, arrastrar la barra para moverla y tirar de sus bordes o esquinas para cambiar su tamaño.
+Cada ventana tiene tres botones a la derecha: el amarillo la minimiza hacia el Dock, el verde la maximiza y el rojo, en el extremo, la cierra. También puedes hacer **doble clic en la barra de título** para maximizar o restaurar, arrastrar la barra para moverla y tirar de sus bordes o esquinas para cambiar su tamaño.
 
 Si una ventana tiene cambios sin guardar, el sistema te preguntará qué hacer antes de cerrarla, cerrar sesión, reiniciar o apagar.
 
@@ -39,3 +39,5 @@ Los elementos que borras van a la **Papelera** del Dock, donde se pueden restaur
 ## Cuenta, bloqueo y energía
 
 **Bloquear** conserva tus ventanas tal como están y pide tu contraseña para volver. **Cerrar sesión** y **Reiniciar** cierran todas las ventanas; **Apagar** cierra el sistema. Puedes cambiar tu nombre, tu avatar y tu contraseña en {{app:settings}}.
+
+{{os}} admite **varias cuentas**, aunque solo una sesión abierta a la vez. Tras **Cerrar sesión** eliges tu cuenta en la pantalla de inicio, o creas otra con **Nuevo usuario**. Cada cuenta tiene sus propios ajustes (tema, fondo, Dock, íconos y widgets del escritorio, sonido, fecha y hora); los archivos, las notas, los contactos, el calendario y las alarmas son de todos.

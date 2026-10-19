@@ -16,6 +16,13 @@ export type { SettingKey, SettingValue, SettingValues } from './schema'
 
 const store = createStore<{ values: SettingValues }>(() => ({ values: { ...settingDefaults } }))
 
+/** Cuenta cuyos ajustes están cargados; sin cuenta (asistente de primer arranque) los cambios no se guardan. */
+let scope: string | null = null
+/** Cada `load` toma un número: si llega otro antes de terminar, el resultado del primero se descarta. */
+let loadCount = 0
+
+const keyOf = (userId: string, key: string) => `${userId}:${key}`
+
 function validate<K extends SettingKey>(key: K, value: unknown): SettingValue<K> {
   const result = settingSchemas[key].safeParse(value)
   if (!result.success) {
@@ -25,19 +32,35 @@ function validate<K extends SettingKey>(key: K, value: unknown): SettingValue<K>
 }
 
 export const settings = {
-  /** Lee de la base de datos los valores guardados. Lo que falte o sea inválido usa el valor por defecto. */
-  async load(): Promise<void> {
+  /**
+   * Carga los ajustes de una cuenta (`null`: solo los valores por defecto) y los deja como ajustes en
+   * uso: lo que falte o sea inválido usa el valor por defecto, y desde ahora `set` guarda en esa cuenta.
+   */
+  async load(userId: string | null): Promise<void> {
+    const mine = ++loadCount
+    scope = userId
     const values: SettingValues = { ...settingDefaults }
-    for (const record of await storage.settings.all()) {
-      if (!isSettingKey(record.key)) continue
-      const result = settingSchemas[record.key].safeParse(record.value)
-      if (result.success) {
-        ;(values as Record<string, unknown>)[record.key] = result.data
-      } else {
-        console.warn(`[configuración] Se ignora el valor guardado de "${record.key}":`, formatIssues(result.error))
+    if (userId !== null) {
+      const prefix = keyOf(userId, '')
+      const records = await storage.settings.byPrefix(prefix)
+      if (mine !== loadCount) return
+      for (const record of records) {
+        const key = record.key.slice(prefix.length)
+        if (!isSettingKey(key)) continue
+        const result = settingSchemas[key].safeParse(record.value)
+        if (result.success) {
+          ;(values as Record<string, unknown>)[key] = result.data
+        } else {
+          console.warn(`[configuración] Se ignora el valor guardado de "${key}":`, formatIssues(result.error))
+        }
       }
     }
     store.setState({ values })
+  },
+
+  /** Pasa a la cuenta `userId` los ajustes globales de antes de que hubiera varias cuentas. Es seguro repetirlo. */
+  migrateLegacy(userId: string): Promise<void> {
+    return storage.settings.migrateLegacy(userId, isSettingKey)
   },
 
   get<K extends SettingKey>(key: K): SettingValue<K> {
@@ -47,7 +70,7 @@ export const settings = {
   /** Valida, guarda y publica `settings:changed`. Lanza un error si el valor no es válido. */
   async set<K extends SettingKey>(key: K, value: SettingValue<K>): Promise<void> {
     const valid = validate(key, value)
-    await storage.settings.set(key, valid)
+    if (scope !== null) await storage.settings.set(keyOf(scope, key), valid)
     store.setState((state) => ({ values: { ...state.values, [key]: valid } }))
     emit('settings:changed', { key, value: valid })
   },
@@ -61,6 +84,12 @@ export const settings = {
     return settingDefaults[key]
   },
 
+  /** Cambia un ajuste solo en memoria, sin guardarlo (la vista previa del asistente). */
+  preview<K extends SettingKey>(key: K, value: SettingValue<K>): void {
+    const valid = validate(key, value)
+    store.setState((state) => ({ values: { ...state.values, [key]: valid } }))
+  },
+
   /** Avisa solo cuando cambia el valor de `key`. Devuelve la función que cancela la suscripción. */
   subscribe<K extends SettingKey>(key: K, listener: (value: SettingValue<K>) => void): () => void {
     return store.subscribe((state, previous) => {
@@ -68,11 +97,15 @@ export const settings = {
     })
   },
 
-  /** Guarda todos los valores actuales (los usa el asistente de primer arranque). */
-  async persistAll(): Promise<void> {
-    const values = store.getState().values
+  /**
+   * Guarda todos los ajustes de una cuenta nueva: los valores por defecto con las excepciones de `overrides`.
+   * No cambia los ajustes que están en uso. Se guardan todos para que, por ejemplo, `dock.pinned` no cambie
+   * si más adelante se instala una app anclada por defecto.
+   */
+  async persistNew(userId: string, overrides: Partial<SettingValues> = {}): Promise<void> {
+    const values: SettingValues = { ...settingDefaults, ...overrides }
     await storage.settings.bulkSet(
-      (Object.keys(values) as SettingKey[]).map((key) => ({ key, value: values[key] }))
+      (Object.keys(values) as SettingKey[]).map((key) => ({ key: keyOf(userId, key), value: validate(key, values[key]) }))
     )
   }
 }

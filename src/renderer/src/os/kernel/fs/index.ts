@@ -5,7 +5,7 @@ import { FALLBACK_MIME, mimeFromFileName } from './mime'
 import { ROOT_ID, TRASH_ID, USERS_DIR, pathSegments, validateNodeName } from './paths'
 import { FsError, type FsApi } from './types'
 
-export { createInitialTree } from './tree'
+export { createSystemTree, createUserHome } from './tree'
 export { FsError } from './types'
 export type { FsApi, FsErrorCode, FsNode } from './types'
 export { baseName, joinPath, parentPath, validateNodeName, ROOT_ID, TRASH_ID, TRASH_NAME } from './paths'
@@ -31,13 +31,20 @@ async function getNode(id: string): Promise<NodeRecord> {
   return node
 }
 
+/** Nombre de la cuenta con la sesión abierta: su carpeta de inicio es lo que `~` significa. */
+let currentUser: string | null = null
+
+/** Lo llama la sesión al abrirla (con el nombre de la cuenta), al cambiarle el nombre y al cerrarla (`null`). */
+export function setCurrentUser(name: string | null): void {
+  currentUser = name
+}
+
 /** Expande "~" y devuelve los segmentos de una ruta absoluta. */
 async function expand(path: string): Promise<string[]> {
   let absolute = path
   if (path === '~' || path.startsWith('~/')) {
-    const user = await storage.user.get()
-    if (!user) throw new FsError('ENOENT', 'Todavía no hay una carpeta de inicio.')
-    absolute = `/${USERS_DIR}/${user.name}${path.slice(1)}`
+    if (currentUser === null) throw new FsError('ENOENT', 'Todavía no hay una carpeta de inicio.')
+    absolute = `/${USERS_DIR}/${currentUser}${path.slice(1)}`
   }
   if (!absolute.startsWith('/')) {
     throw new FsError('EINVAL', `La ruta debe ser absoluta: "${path}".`)

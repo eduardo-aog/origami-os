@@ -18,4 +18,6 @@ Zona horaria y formato de 24 horas.
 
 ## Cuenta
 
-Cambia tu nombre (también cambia el de tu carpeta de inicio), tu avatar —uno incluido o una imagen tuya— y tu contraseña, para la que necesitas escribir primero la actual.
+Cambia tu nombre (también cambia el de tu carpeta de inicio; no puede repetirse el de otra cuenta), tu avatar —uno incluido o una imagen tuya— y tu contraseña, para la que necesitas escribir primero la actual.
+
+Todos los ajustes de Configuración son de tu cuenta: otra persona que use el sistema con su propia cuenta tendrá los suyos. Las cuentas nuevas se crean desde la pantalla de inicio de sesión.

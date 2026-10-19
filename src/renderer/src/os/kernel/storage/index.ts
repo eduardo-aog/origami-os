@@ -54,8 +54,12 @@ export const storage = {
   },
 
   user: {
-    get(): Promise<UserRecord | undefined> {
-      return db.user.get('user')
+    get(id: string): Promise<UserRecord | undefined> {
+      return db.user.get(id)
+    },
+    /** Todas las cuentas, de la más antigua a la más reciente. */
+    async all(): Promise<UserRecord[]> {
+      return (await db.user.toArray()).sort((a, b) => a.createdAt - b.createdAt)
     },
     async put(user: UserRecord): Promise<void> {
       await db.user.put(user)
@@ -105,8 +109,23 @@ export const storage = {
   },
 
   settings: {
-    all(): Promise<SettingRecord[]> {
-      return db.settings.toArray()
+    /** Los ajustes de una cuenta: las filas cuya clave empieza por `prefix`. */
+    byPrefix(prefix: string): Promise<SettingRecord[]> {
+      return db.settings.where('key').startsWith(prefix).toArray()
+    },
+    /**
+     * Antes los ajustes eran globales (clave sin `:`). Pasa los que cumplen `keep` a la cuenta `userId`
+     * (sin pisar los que ya tenga) y borra todas las filas antiguas, incluidas las de ajustes que ya no existen.
+     */
+    async migrateLegacy(userId: string, keep: (key: string) => boolean): Promise<void> {
+      await db.transaction('rw', db.settings, async () => {
+        const legacy = (await db.settings.toArray()).filter((record) => !record.key.includes(':'))
+        for (const record of legacy) {
+          const key = `${userId}:${record.key}`
+          if (keep(record.key) && (await db.settings.get(key)) === undefined) await db.settings.put({ key, value: record.value })
+        }
+        await db.settings.bulkDelete(legacy.map((record) => record.key))
+      })
     },
     async set(key: string, value: unknown): Promise<void> {
       await db.settings.put({ key, value })

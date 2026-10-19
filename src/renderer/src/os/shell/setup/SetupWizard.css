@@ -15,6 +15,11 @@
   }
 }
 
+.setup--overlay {
+  background: var(--color-lock-scrim);
+  backdrop-filter: blur(6px);
+}
+
 .setup__card {
   position: relative;
   width: 420px;

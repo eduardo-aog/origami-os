@@ -9,7 +9,7 @@ export type Avatar = z.output<typeof avatarSchema>
 
 export const userRecordSchema = z
   .object({
-    id: z.literal('user'),
+    id: z.string().min(1),
     name: z.string().min(1),
     avatar: avatarSchema,
     passwordHash: z.string().min(1),

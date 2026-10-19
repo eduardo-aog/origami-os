@@ -2,6 +2,7 @@ import { osConfig } from '../config'
 import { storage, type NodeRecord } from '../storage'
 import { mimeFromFileName } from './mime'
 import { ROOT_ID, TRASH_ID, TRASH_NAME, USERS_DIR } from './paths'
+import { FsError } from './types'
 
 function folder(id: string, parentId: string | null, name: string): NodeRecord {
   const now = Date.now()
@@ -31,16 +32,27 @@ function welcomeText(userName: string): string {
 }
 
 /**
- * Crea la raíz, la papelera y el árbol de carpetas del usuario (sección 4.3).
- * Lo llama el asistente de primer arranque, dentro de su transacción.
+ * Crea la raíz, la papelera y la carpeta `Usuarios` (sección 4.3). Se hace una sola vez, en el primer
+ * arranque, dentro de la transacción del asistente.
  */
-export async function createInitialTree(userName: string): Promise<void> {
-  const usersId = crypto.randomUUID()
-  const homeId = crypto.randomUUID()
-
+export async function createSystemTree(): Promise<void> {
   await storage.nodes.put(folder(ROOT_ID, null, ''))
   await storage.nodes.put(folder(TRASH_ID, ROOT_ID, TRASH_NAME))
-  await storage.nodes.put(folder(usersId, ROOT_ID, USERS_DIR))
+  await storage.nodes.put(folder(crypto.randomUUID(), ROOT_ID, USERS_DIR))
+}
+
+/**
+ * Crea la carpeta de inicio de una cuenta con sus carpetas estándar y `Documentos/Bienvenida.txt`.
+ * Se llama dentro de la transacción que da de alta la cuenta. Falla si ya hay una carpeta con ese nombre.
+ */
+export async function createUserHome(userName: string): Promise<void> {
+  const users = await storage.nodes.getByName(ROOT_ID, USERS_DIR)
+  if (!users) throw new FsError('ENOENT', 'Todavía no existe la carpeta de usuarios.')
+  if (await storage.nodes.getByName(users.id, userName)) {
+    throw new FsError('EEXIST', 'Ya existe un usuario con ese nombre.')
+  }
+  const usersId = users.id
+  const homeId = crypto.randomUUID()
   await storage.nodes.put(folder(homeId, usersId, userName))
 
   const create = async (parentId: string, name: string): Promise<string> => {

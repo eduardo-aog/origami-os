@@ -13,7 +13,9 @@ import './SetupWizard.css'
 type Step = 'welcome' | 'name' | 'password' | 'avatar' | 'theme' | 'creating'
 type Theme = Exclude<SettingValue<'appearance.theme'>, 'auto'>
 
-const STEPS: Step[] = ['welcome', 'name', 'password', 'avatar', 'theme']
+const FIRST_STEPS: Step[] = ['welcome', 'name', 'password', 'avatar', 'theme']
+/** Una cuenta adicional no necesita la bienvenida. */
+const ADDITIONAL_STEPS: Step[] = ['name', 'password', 'avatar', 'theme']
 const MAX_NAME_LENGTH = 32
 
 const THEME_OPTIONS: { value: Theme; label: string }[] = [
@@ -24,6 +26,8 @@ const THEME_OPTIONS: { value: Theme; label: string }[] = [
 function validateName(name: string): string | null {
   const trimmed = name.trim()
   if (trimmed.length > MAX_NAME_LENGTH) return `El nombre no puede superar ${MAX_NAME_LENGTH} caracteres.`
+  const taken = session.getState().users.some((user) => user.name.toLowerCase() === trimmed.toLowerCase())
+  if (taken) return 'Ya existe un usuario con ese nombre.'
   return validateNodeName(trimmed)
 }
 
@@ -34,10 +38,18 @@ function validatePassword(password: string, confirmation: string): string | null
   return password === confirmation ? null : 'Las contraseñas no coinciden.'
 }
 
-export function SetupWizard() {
+interface SetupWizardProps {
+  /** `first` es el primer arranque; `additional` crea otra cuenta desde la pantalla de inicio de sesión. */
+  mode?: 'first' | 'additional'
+  /** Solo en `additional`: se llama al cancelar y al terminar (la cuenta ya está creada). */
+  onClose?: () => void
+}
+
+export function SetupWizard({ mode = 'first', onClose }: SetupWizardProps) {
+  const STEPS = mode === 'first' ? FIRST_STEPS : ADDITIONAL_STEPS
   const avatars = listBuiltinAvatars()
   const settingsName = getApp(SETTINGS_APP_ID)?.manifest.name
-  const [step, setStep] = useState<Step>('welcome')
+  const [step, setStep] = useState<Step>(STEPS[0] ?? 'name')
   const [name, setName] = useState('')
   const [password, setPassword] = useState('')
   const [confirmation, setConfirmation] = useState('')
@@ -54,14 +66,20 @@ export function SetupWizard() {
 
   function chooseTheme(next: Theme) {
     setTheme(next)
-    // Se aplica al instante para que se vea cómo queda.
-    void settings.set('appearance.theme', next)
+    // Se aplica al instante para que se vea cómo queda, pero no se guarda: el tema se guarda al crear la cuenta.
+    settings.preview('appearance.theme', next)
   }
 
   async function finish() {
     goTo('creating')
     try {
-      await session.completeSetup({ name, password, avatar: { type: 'builtin', id: avatarId }, theme })
+      const input = { name, password, avatar: { type: 'builtin' as const, id: avatarId }, theme }
+      if (mode === 'first') {
+        await session.completeSetup(input)
+      } else {
+        await session.createUser(input)
+        onClose?.()
+      }
     } catch (failure) {
       setError(failure instanceof Error ? failure.message : String(failure))
       setStep('theme')
@@ -81,8 +99,8 @@ export function SetupWizard() {
   }
 
   return (
-    <div className="setup">
-      <Wallpaper />
+    <div className={`setup${mode === 'additional' ? ' setup--overlay' : ''}`}>
+      {mode === 'first' ? <Wallpaper /> : null}
       <div className="setup__card">
         {step === 'creating' ? (
           <div className="setup__creating" role="status">
@@ -202,6 +220,8 @@ export function SetupWizard() {
             <div className="setup__actions">
               {stepIndex > 0 ? (
                 <Button onClick={() => goTo(STEPS[stepIndex - 1] ?? 'welcome')}>Atrás</Button>
+              ) : mode === 'additional' ? (
+                <Button onClick={() => onClose?.()}>Cancelar</Button>
               ) : null}
               <Button type="submit" variant="primary" autoFocus={step === 'welcome' || step === 'avatar' || step === 'theme'}>
                 {step === 'theme' ? 'Terminar' : 'Continuar'}

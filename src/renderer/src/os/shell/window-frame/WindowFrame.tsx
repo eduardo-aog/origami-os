@@ -171,11 +171,6 @@ export const WindowFrame = memo(function WindowFrame({
         }}
       >
         <div className="window__controls">
-          <button type="button" className="window__control window__control--close" aria-label="Cerrar" onClick={() => void closeWindow(win.id)}>
-            <svg viewBox="0 0 8 8" aria-hidden="true">
-              <path d="M1.5 1.5l5 5m0-5l-5 5" />
-            </svg>
-          </button>
           <button type="button" className="window__control window__control--minimize" aria-label="Minimizar" onClick={() => minimizeWindow(win.id)}>
             <svg viewBox="0 0 8 8" aria-hidden="true">
               <path d="M1.2 4h5.6" />
@@ -190,6 +185,11 @@ export const WindowFrame = memo(function WindowFrame({
           >
             <svg viewBox="0 0 8 8" aria-hidden="true">
               {win.state === 'maximized' ? <path d="M1.5 4h5M4 1.5v5" transform="rotate(45 4 4)" /> : <path d="M4 1.2v5.6M1.2 4h5.6" />}
+            </svg>
+          </button>
+          <button type="button" className="window__control window__control--close" aria-label="Cerrar" onClick={() => void closeWindow(win.id)}>
+            <svg viewBox="0 0 8 8" aria-hidden="true">
+              <path d="M1.5 1.5l5 5m0-5l-5 5" />
             </svg>
           </button>
         </div>

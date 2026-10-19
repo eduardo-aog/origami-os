@@ -586,3 +586,62 @@ Probado con Electron y datos aislados, controlado por CDP, en desarrollo y en el
 - Arranque en frío medido en desarrollo: unos 2 s hasta la primera salida; las siguientes ejecuciones en la misma ventana son inmediatas.
 
 **Sin probar:** rendimiento de programas pesados; macOS y Windows (Pyodide no depende del sistema, pero no lo ejecuté allí); la memoria que mantiene viva la instancia de Pyodide entre ejecuciones: el worker se conserva tras un programa que termina con normalidad (para que el siguiente arranque al instante) y solo se libera al cancelar, al cerrar la ventana *durante* una ejecución o al cerrar sesión, reiniciar o apagar.
+
+### Otros cambios menores
+
+- **Nombre del sistema:** pasó a **OrigamiOS** (`os.config.json`). El nombre de la base de datos (`simos`) y el tipo de arrastre (`application/x-simos-node`) no cambian a propósito.
+- **Archivos `.py`:** usan el ícono `system/icons/file-python.svg` (por el tipo MIME `text/x-python`, en `FileIcon`) y en la columna «Tipo» aparecen como «Python».
+
+---
+
+## Multiusuario ligero
+
+**Estado:** completado. `npm run typecheck`, `npm run lint` y `npm run build` pasan sin errores ni advertencias. Se actualizó antes la especificación (§1, 4.2, 4.3, 4.5, 4.8 y Fase 1).
+
+### Qué se hizo
+
+Varias cuentas (nombre, avatar, contraseña) con **una sola sesión abierta a la vez**. Todas las cuentas son iguales: sin administrador, sin permisos y sin borrar cuentas.
+- **Compartido por todos:** archivos (cada cuenta ve las carpetas de las demás), datos de las apps (Notas, Contactos, Calendario, Reloj…), alarmas y papelera.
+- **De cada cuenta:** todos los ajustes: tema, acento, fondo, Dock (ancladas, tamaño y espaciado), íconos y widgets del escritorio, sonido, fecha y hora y asociaciones de archivo.
+
+**Kernel**
+- `storage`: `userRecordSchema.id` pasa a cadena libre (la cuenta existente conserva `user`; las nuevas usan un UUID); `storage.user` → `get(id)`, `all()`, `put`; `storage.settings` → `byPrefix` y `migrateLegacy`. **No hay cambio de esquema Dexie** (`SCHEMA_VERSION` sigue en 1).
+- `settings`: los ajustes se guardan con la clave `<id de cuenta>:<clave>`. `load(userId | null)`, `set` (guarda solo si hay una cuenta cargada), `preview` (solo en memoria), `persistNew(userId, overrides)` y `migrateLegacy`. Un `load` que llega tarde se descarta si ya hay otro en curso.
+- `fs`: `~` sigue a la cuenta con la sesión abierta (`setCurrentUser`, que llama la sesión; `fs` no puede importarla). `createInitialTree` se dividió en `createSystemTree()` (una vez) y `createUserHome(name)` (por cuenta, falla con `EEXIST` si el nombre ya existe).
+- `session`: `SessionUser` gana `id`; el estado gana `users` y `lastUserId`; nuevos `createUser` y `login(userId, password)`; `completeSetup` = alta + inicio de sesión; `unlock`, `rename`, `setAvatar` y `changePassword` actúan sobre la cuenta activa; el nombre de cuenta no puede repetirse (sin distinguir mayúsculas). Cerrar sesión deja `user = null`.
+
+**Interfaz**
+- Pantalla de inicio de sesión: con una cuenta va directo a la contraseña (como antes) y ofrece «Nuevo usuario»; con varias muestra «¿Quién eres?» con los avatares (la última cuenta en entrar, primero) y «Nuevo usuario»; al elegir una se ve su fondo y su tema. «Otro usuario» vuelve a la lista. La pantalla de bloqueo solo ofrece la cuenta activa.
+- `SetupWizard` con `mode="additional"`: sin bienvenida, con «Cancelar», sobre la pantalla de inicio de sesión; avisa al momento de un nombre repetido; la vista previa del tema ya no se guarda.
+
+### Verificación
+
+Probado con Electron y datos aislados, controlado por CDP, con el build real (`file://`):
+
+| Punto | Resultado |
+|---|---|
+| Migración de datos de la versión anterior | **Sí.** Con una copia de datos de una cuenta única (ajustes globales y filas `network.*` viejas): las claves quedaron como `user:<clave>`, las antiguas desaparecieron (incluidas las `network.*`) y al entrar conservó su tema y su espaciado del Dock (18 px). |
+| Segunda cuenta desde la pantalla de inicio | **Sí.** «Ana» ya existía: «ana» da «Ya existe un usuario con ese nombre.» al instante; se creó «Beto» con tema oscuro; al terminar la pantalla volvió al aspecto de Ana (la vista previa no se guardó). |
+| Ajustes por cuenta | **Sí.** Beto entró con tema oscuro y espaciado 4; cambió el espaciado a 12; Ana entró con tema claro y 18; todo persistió tras reiniciar Electron (Beto: oscuro y 12). |
+| Archivos compartidos y `~` | **Sí.** `pwd` da `/Usuarios/Beto` o `/Usuarios/Ana` según quién entró; Ana ve `/Usuarios/Beto` y el archivo que Beto creó. |
+| Bloqueo y contraseña incorrecta | **Sí.** El bloqueo muestra solo a la cuenta activa, con «Desbloquear»; contraseña incorrecta da el error y la correcta desbloquea. |
+| Cambiar de nombre | **Sí.** Cambiar «Ana» por «BETO» en Configuración → Cuenta da «Ya existe un usuario con ese nombre.» y no cambia nada. |
+| Orden de la lista tras reiniciar | **Sí.** Sale primero la última cuenta que entró. |
+| Primer arranque limpio | **Sí.** El asistente crea la primera cuenta como antes, con el tema elegido (oscuro) aplicado al entrar. |
+
+**Sin probar:** datos de apps compartidos entre cuentas (Notas, Contactos, Calendario) y alarmas: no se tocó nada de `appData` ni del programador, que no distinguen usuarios, pero no abrí esas apps con dos cuentas; el tamaño del selector con muchas cuentas (se ajusta en varias filas, sin revisar con más de tres); ventanas en tamaño mínimo y tema claro del selector (se vio solo el oscuro sobre el fondo habitual); que se oigan los sonidos de entrada y salida.
+
+### Desviaciones y decisiones
+
+1. **No hay «Cambiar de usuario» en el menú del sistema:** «Cerrar sesión» ya lleva a la lista de cuentas y sería un elemento duplicado.
+2. **No se pueden borrar cuentas** (fuera de alcance, §1). Tampoco renombrar la carpeta de otra cuenta.
+3. **Las cuentas no tienen privacidad entre sí:** por diseño, todas ven los archivos y los datos de las demás. Lo único separado son los ajustes.
+4. **El nombre de la cuenta es el de su carpeta de inicio**, así que no puede repetirse ni siquiera cambiando mayúsculas.
+5. **`SetupWizard` calcula `STEPS` según el modo** y pasa a recibir `mode` y `onClose`.
+6. **Al cerrar sesión se deja cargada la apariencia de la cuenta que salió** hasta que se elige otra, para que la pantalla de inicio no «salte».
+
+## Botones de ventana a la derecha
+
+- Los tres botones (cerrar, minimizar, maximizar) pasan del lado izquierdo al derecho de la barra de título, y el orden pasa a minimizar, maximizar, cerrar (cerrar en el extremo derecho). Cambia `.window__controls` en `WindowFrame.css` (`margin-left: auto` y `padding-right` en vez de `padding-left`); el título sigue centrado.
+- Cambio de contrato: §1 y §6 de `ESPECIFICACION.md` y el texto de «Primeros pasos» (`getting-started.md`) ahora dicen «a la derecha».
+- Botones más grandes: 16 px de diámetro (antes 12), glifo de 10 px, separación de 10 px y margen derecho de 14 px; el título reserva 88 px por lado para no quedar bajo los botones. Solo `WindowFrame.css`; §6 de la especificación indica ahora «16 px».

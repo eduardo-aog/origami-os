@@ -14,7 +14,7 @@ Las rutas de esta guía son relativas a `src/renderer/src/`.
 Casos especiales:
 
 - **`system/os.config.json`** también lo lee el proceso principal de Electron (nombre de la ventana y pantalla completa), así que **siempre exige reiniciar** `npm run dev` o recompilar.
-- **Valores iniciales de la cuenta.** El tema, el color de acento, el fondo, la zona horaria, el formato de 24 h, las apps ancladas al Dock y el resto de ajustes se guardan en el primer arranque. Cambiar `defaults` en `os.config.json` o `pinnedByDefault` en un manifiesto **no afecta a una cuenta ya creada**. Para verlos hay que empezar de cero (borrar los datos de la aplicación para que vuelva a salir el asistente) o, en Configuración → Escritorio y Dock, usar los botones de restablecer.
+- **Valores iniciales de cada cuenta.** El tema, el color de acento, el fondo, la zona horaria, el formato de 24 h, las apps ancladas al Dock y el resto de ajustes se guardan **al crear cada cuenta** (los ajustes son de cada usuario). Cambiar `defaults` en `os.config.json` o `pinnedByDefault` en un manifiesto **no afecta a una cuenta ya creada**. Para verlos hay que empezar de cero (borrar los datos de la aplicación para que vuelva a salir el asistente) o, en Configuración → Escritorio y Dock, usar los botones de restablecer.
 - Los datos de cada usuario viven en IndexedDB. `npm run dev` (origen `http://localhost:5173`) y la app compilada (`file://`) tienen datos separados.
 
 ---
@@ -174,7 +174,7 @@ Los colores de las superficies siempre multimedia (visor, video, cámara) y los 
 4. En `apps/mi-app/src/index.tsx` exporta por defecto el componente raíz. Para hablar con el sistema usa solo `@os/sdk` y `@os/ui` (`useOS()`, `useAppMenus()`, `useUnsavedChanges()`…).
 5. Reinicia `npm run dev` o ejecuta `npm run build`.
 
-No hay que registrar la app en ningún otro sitio: aparece sola en el Launchpad, la Ayuda y el Administrador de tareas. Si `dock.pinnedByDefault` es `true`, se ancla en las cuentas nuevas; en una cuenta existente, usa Configuración → Escritorio y Dock → restablecer apps ancladas, o "Mantener en el Dock" desde su menú contextual.
+No hay que registrar la app en ningún otro sitio: aparece sola en el Launchpad, la Ayuda y el Administrador de tareas. Si `dock.pinnedByDefault` es `true`, se ancla en las cuentas que se creen después; en una cuenta existente, usa Configuración → Escritorio y Dock → restablecer apps ancladas, o "Mantener en el Dock" desde su menú contextual.
 
 **Reglas que se comprueban con `npm run lint`:** una app solo puede importar `@os/sdk`, `@os/ui`, `react`, `react-dom`, `lucide-react`, `zustand` y archivos de su propia carpeta. Nunca otra app, `os/kernel` ni `os/shell`. Si rompes una de estas reglas, `lint` falla.
 

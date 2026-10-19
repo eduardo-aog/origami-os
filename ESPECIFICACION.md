@@ -8,17 +8,17 @@
 
 Un simulador de sistema operativo de escritorio que corre como aplicación Electron. No es un SO real: no hay kernel, hilos ni planificación de procesos reales. Es un entorno que **se comporta y se ve** como un SO moderno, con sesión de usuario, escritorio, ventanas, sistema de archivos persistente y un conjunto de aplicaciones.
 
-- **Estilo visual:** inspirado en macOS, versión minimalista. Barra de menú superior, Dock inferior, Launchpad, ventanas con tres botones de color a la izquierda, esquinas redondeadas, desenfoque translúcido (`backdrop-filter`), animaciones suaves y cortas.
+- **Estilo visual:** inspirado en macOS, versión minimalista. Barra de menú superior, Dock inferior, Launchpad, ventanas con tres botones de color a la derecha, esquinas redondeadas, desenfoque translúcido (`backdrop-filter`), animaciones suaves y cortas.
 - **Prohibido usar recursos de Apple:** nada de íconos, fondos, fuentes (SF Pro), logotipos ni sonidos de Apple. Todo debe ser original o de licencia libre.
 - **Idioma de la interfaz:** español. Identificadores de código, nombres de archivo y commits en inglés.
 - **Nombre del SO:** configurable en `os.config.json` (valor inicial: `"OrigamiOS"`). Ningún texto de la interfaz debe tener el nombre escrito a mano; siempre se lee de la configuración.
-- **Usuario único:** el sistema tiene una sola cuenta de usuario, creada en el primer arranque.
+- **Varias cuentas, una sesión:** el sistema admite varias cuentas (nombre, avatar y contraseña); la primera se crea en el primer arranque y las demás desde la pantalla de inicio de sesión. Solo hay **una sesión abierta a la vez**. Es un multiusuario "ligero": todas las cuentas son iguales (sin administrador ni permisos) y **comparten** los archivos, los datos de las apps y los avisos del programador. Lo que es de cada usuario son sus **ajustes** (4.5): tema, acento, fondo, Dock, íconos y widgets del escritorio, sonido, fecha y hora y asociaciones de archivo.
 
 ### Alcance aprobado (no agregar funciones fuera de esta lista)
 
 | Área | Incluido |
 |---|---|
-| Sesión | Pantalla de arranque, asistente de primer arranque, pantalla de bloqueo/inicio de sesión con contraseña, bloquear, cerrar sesión, reiniciar, apagar |
+| Sesión | Pantalla de arranque, asistente de primer arranque, pantalla de bloqueo/inicio de sesión con contraseña y elección de cuenta, crear cuentas nuevas, bloquear, cerrar sesión, reiniciar, apagar |
 | Shell | Barra de menú superior, Dock, Launchpad, escritorio personalizable (fondo, íconos movibles, widgets), menús contextuales, notificaciones emergentes |
 | Ventanas | Abrir, cerrar, minimizar, maximizar, arrastrar, redimensionar, foco y apilamiento, diálogos modales |
 | Archivos | Árbol virtual, crear/renombrar/duplicar/copiar a/mover/borrar, papelera con restauración, metadatos, arrastrar y soltar, "Abrir con…", importar desde el equipo real, persistencia |
@@ -29,7 +29,7 @@ Un simulador de sistema operativo de escritorio que corre como aplicación Elect
 
 ### Fuera de alcance (no implementar)
 
-Multiusuario, cuenta invitado, suspender/hibernar, centro de notificaciones con historial, ajustes rápidos, búsqueda global, escritorios virtuales, atajos de teclado globales del sistema, snap de ventanas, Alt+Tab, vista general de ventanas, **portapapeles propio del sistema**, accesos directos/alias de archivos, permisos de archivos por usuario, unidades externas, cuota de disco, navegador web, editor de código, PDF, correo, captura de pantalla, tienda de apps, internacionalización, accesibilidad avanzada, empaquetado con instaladores, pruebas automatizadas.
+Sesiones simultáneas de varios usuarios, administrador y roles, borrar cuentas, cuenta invitado, suspender/hibernar, centro de notificaciones con historial, ajustes rápidos, búsqueda global, escritorios virtuales, atajos de teclado globales del sistema, snap de ventanas, Alt+Tab, vista general de ventanas, **portapapeles propio del sistema**, accesos directos/alias de archivos, permisos de archivos por usuario (y separar archivos o datos de apps entre cuentas), unidades externas, cuota de disco, navegador web, editor de código, PDF, correo, captura de pantalla, tienda de apps, internacionalización, accesibilidad avanzada, empaquetado con instaladores, pruebas automatizadas.
 
 **Sobre Python:** solo existe el comando `python` de la Terminal (4.15). No hay app de Python ni editor de código; los `.py` se abren con el Editor de texto como cualquier archivo de texto.
 
@@ -204,11 +204,11 @@ Nombre de la base: `simos`. Tablas:
 
 | Tabla | Clave | Campos |
 |---|---|---|
-| `meta` | `key` | `value` (versión de esquema, `setupCompleted`) |
-| `user` | `id` | `name`, `avatar` (`{ type: 'builtin', id }` o `{ type: 'file', nodeId }`), `passwordHash`, `salt`, `createdAt` |
+| `meta` | `key` | `value` (versión de esquema, `setupCompleted`, `lastUserId`: la última cuenta que inició sesión) |
+| `user` | `id` | Un registro por cuenta: `name` (único sin distinguir mayúsculas), `avatar` (`{ type: 'builtin', id }` o `{ type: 'file', nodeId }`), `passwordHash`, `salt`, `createdAt`. El `id` es cualquier cadena única (la cuenta más antigua conserva `user`) |
 | `nodes` | `id` | `parentId`, `name`, `kind` (`'file'`/`'folder'`), `mime`, `size`, `createdAt`, `modifiedAt`, `blobId`, `system` (bool, carpetas protegidas), `trash` (`{ originalParentId, originalName, trashedAt }` o `null`). Índice único compuesto `[parentId+name]` |
 | `blobs` | `id` | `data` (`Blob`) |
-| `settings` | `key` | `value` |
+| `settings` | `key` | `value`. Los ajustes son por usuario: la clave es `<id de la cuenta>:<clave del ajuste>` (por ejemplo `user:dock.gap`) |
 | `appData` | `[appId+key]` | `appId`, `key`, `value` |
 | `scheduled` | `id` | `appId`, `fireAt`, `title`, `body`, `sound`, `repeat` (`'none'`/`'daily'`/`'weekdays'`), `payload` |
 
@@ -216,7 +216,7 @@ Cualquier cambio de esquema incrementa la versión de Dexie con migración.
 
 ### 4.3 Sistema de archivos virtual (`kernel/fs`)
 
-**Árbol inicial** (creado por el asistente de primer arranque):
+**Árbol inicial** (el sistema —raíz, papelera y `Usuarios/`— lo crea el asistente de primer arranque, y la carpeta de cada cuenta se crea al dar de alta a esa cuenta):
 
 ```
 /
@@ -232,7 +232,7 @@ Las carpetas del árbol inicial tienen `system: true`: no se pueden renombrar, m
 
 **Papelera:** `trash(path)` mueve el nodo (con todo su contenido) bajo `.Papelera/` y rellena `trash`. Si ya hay un elemento con ese nombre en la papelera se añade un sufijo, y `trash.originalName` conserva el nombre de origen para restaurarlo. El elemento es un hijo directo de `.Papelera`; solo ese nodo lleva `trash` distinto de `null`.
 
-**Reglas:** rutas absolutas separadas por `/`; `~` se expande a la carpeta de inicio; nombres sensibles a mayúsculas; prohibidos `/`, nombre vacío, `.` y `..`. Si un nombre ya existe en el destino al duplicar, copiar o mover, se agrega un sufijo (`informe (2).txt`); al crear o renombrar a mano, se muestra error.
+**Reglas:** rutas absolutas separadas por `/`; `~` se expande a la carpeta de inicio de la cuenta con la sesión abierta; nombres sensibles a mayúsculas; prohibidos `/`, nombre vacío, `.` y `..`. Si un nombre ya existe en el destino al duplicar, copiar o mover, se agrega un sufijo (`informe (2).txt`); al crear o renombrar a mano, se muestra error.
 
 **API:**
 
@@ -302,7 +302,7 @@ datetime.hour24         boolean
 fileAssociations.defaults Record<extension, appId>
 ```
 
-`get`, `set`, `subscribe`. Cada `set` emite `settings:changed`. Los valores por defecto iniciales (tema, acento, fondo) se leen de `os.config.json`.
+`get`, `set`, `subscribe`. Cada `set` emite `settings:changed`. Los valores por defecto iniciales (tema, acento, fondo) se leen de `os.config.json`. **Todos los ajustes son por cuenta**: al iniciar sesión se cargan los de esa cuenta (`load(idDeCuenta)`) y los cambios se guardan con su prefijo; una cuenta nueva empieza con los valores por defecto y el tema que elija al crearla. En la pantalla de inicio de sesión se muestran el fondo y el tema de la cuenta elegida. `preview(clave, valor)` cambia un ajuste solo en memoria (la vista previa del asistente).
 
 ### 4.6 Manifiesto de app (`apps/<id>/meta/manifest.json`)
 
@@ -443,7 +443,7 @@ function useProcesses(): {               // 'system:processes'
   forceQuit(instanceId: string): Promise<boolean>; // aviso de pérdida de datos + flujo de 4.9; false si se canceló
 };
 function useAccount(): {                 // 'system:account'
-  user: { name: string; avatar: Avatar } | null;   // reactivo
+  user: { id: string; name: string; avatar: Avatar } | null;   // reactivo; la cuenta con la sesión abierta
   rename(name: string): Promise<void>;             // también renombra la carpeta de inicio
   setAvatar(avatar: Avatar): Promise<void>;
   changePassword(current: string, next: string): Promise<void>;   // lanza Error (en español) si la actual no coincide
@@ -588,7 +588,7 @@ Cada app muestra en su menú de la barra superior un elemento **"Acerca de <App>
 - Tipografía Inter. Tamaño base 13 px en la interfaz del sistema.
 - Barra de menú: 28 px de alto, translúcida con desenfoque.
 - Dock: centrado abajo, translúcido, esquinas de 18 px, ampliación suave del ícono al pasar el cursor, punto bajo las apps abiertas, separador entre apps ancladas, apps abiertas no ancladas y la Papelera. El tamaño de los íconos (`dock.iconSize`) y el espaciado entre elementos (`dock.gap`) los elige el usuario en Configuración.
-- Ventanas: esquinas de 10 px, sombra suave, barra de título integrada de 38 px, botones rojo/amarillo/verde a la izquierda con glifo al pasar el cursor; ventana sin foco con barra atenuada y botones grises.
+- Ventanas: esquinas de 10 px, sombra suave, barra de título integrada de 38 px, botones amarillo/verde/rojo de 16 px a la derecha (minimizar, maximizar, cerrar) con glifo al pasar el cursor; ventana sin foco con barra atenuada y botones grises.
 - Animaciones de 150 a 250 ms: abrir/cerrar ventana (escala + opacidad), minimizar hacia su ícono del Dock, Launchpad (desenfoque + escala), hojas modales (deslizamiento desde la barra de título).
 - Tema claro, oscuro y automático (sigue al sistema real con `prefers-color-scheme`).
 - Íconos de apps originales en SVG: escuadra redondeada (squircle) con degradado y glifo simple, todos con la misma retícula y estilo.
@@ -631,8 +631,8 @@ Reglas para todas las fases:
 
 - `events`, `storage` (esquema 4.2), `fs` (4.3, incluida papelera e importación), `settings` (4.5), `sound` (4.13), `notifications` (servicio; la interfaz de las notificaciones va en la Fase 2), `scheduler` (4.12), `processes` (4.11), `media` (4.14), `session`.
 - Pantalla de arranque: logo y barra de progreso durante `bootDurationMs`, sonido `boot`.
-- Asistente de primer arranque: bienvenida → nombre → contraseña y confirmación (mínimo 4 caracteres) → avatar (íconos incluidos) → tema claro/oscuro → crea usuario, árbol de carpetas y valores por defecto.
-- Pantalla de bloqueo / inicio de sesión estilo macOS: fondo, hora y fecha grandes; al hacer clic o pulsar una tecla aparece avatar, nombre y campo de contraseña. Contraseña incorrecta: animación de sacudida y sonido `error`.
+- Asistente de primer arranque: bienvenida → nombre → contraseña y confirmación (mínimo 4 caracteres) → avatar (íconos incluidos) → tema claro/oscuro → crea usuario, árbol de carpetas y valores por defecto. El mismo asistente, sin la bienvenida y con opción de cancelar, crea cuentas adicionales desde la pantalla de inicio de sesión; el nombre no puede repetirse (sin distinguir mayúsculas).
+- Pantalla de bloqueo / inicio de sesión estilo macOS: fondo, hora y fecha grandes; al hacer clic o pulsar una tecla aparece avatar, nombre y campo de contraseña (con varias cuentas, primero se elige la cuenta entre sus avatares, y hay una opción «Nuevo usuario»; al bloquear solo aparece la cuenta con la sesión abierta). Contraseña incorrecta: animación de sacudida y sonido `error`.
 - Flujo de energía (`shell/power`): bloquear, cerrar sesión, reiniciar (vuelve a la pantalla de arranque) y apagar (pantalla "Apagando…" y luego `native.power.quit()`). En esta fase, sin ventanas todavía, el flujo de cambios sin guardar queda preparado como un paso que recorre las ventanas abiertas.
 - Tras iniciar sesión, mostrar la pantalla temporal de la Fase 0.
 
