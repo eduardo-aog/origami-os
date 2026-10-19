@@ -1,0 +1,26 @@
+{
+  "id": "files",
+  "name": "Archivos",
+  "description": "Explora, organiza e importa tus archivos y carpetas.",
+  "version": "1.0.0",
+  "author": "",
+  "icon": "icon.svg",
+  "category": "sistema",
+  "launchpad": {
+    "visible": true,
+    "order": 10
+  },
+  "dock": {
+    "pinnedByDefault": true
+  },
+  "window": {
+    "width": 880,
+    "height": 560,
+    "minWidth": 520,
+    "minHeight": 340,
+    "resizable": true,
+    "singleInstance": false
+  },
+  "fileAssociations": [],
+  "permissions": []
+}

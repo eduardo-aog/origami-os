@@ -1,0 +1,121 @@
+.menubar {
+  position: fixed;
+  inset: 0 0 auto;
+  z-index: var(--z-menubar);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: var(--menubar-height);
+  padding: 0 var(--space-2);
+  background: var(--color-chrome);
+  color: var(--color-chrome-text);
+  backdrop-filter: var(--blur-chrome);
+  user-select: none;
+}
+
+.menubar__left,
+.menubar__right {
+  display: flex;
+  align-items: center;
+  height: 100%;
+}
+
+.menubar__slot {
+  position: relative;
+  height: 100%;
+}
+
+.menubar__item {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  height: 22px;
+  margin: 3px 1px;
+  padding: 0 var(--space-2);
+  border: none;
+  border-radius: 5px;
+  background: none;
+  color: inherit;
+  cursor: default;
+}
+
+.menubar__slot .menubar__item {
+  height: 22px;
+}
+
+button.menubar__item:hover,
+.menubar__item[aria-expanded='true'] {
+  background: var(--color-hover);
+}
+
+.menubar__item--static {
+  cursor: default;
+}
+
+.menubar__item--app {
+  font-weight: var(--font-weight-semibold);
+}
+
+.menubar__item--icon {
+  padding: 0 6px;
+}
+
+.menubar__logo {
+  display: block;
+  width: 15px;
+  height: 15px;
+  background: currentColor;
+  mask-position: center;
+  mask-repeat: no-repeat;
+  mask-size: contain;
+}
+
+.menubar__dropdown {
+  position: absolute;
+  top: calc(100% - 2px);
+  left: 0;
+  z-index: var(--z-popover);
+}
+
+.menubar__dot {
+  width: 8px;
+  height: 8px;
+  margin: 0 3px;
+  border-radius: 50%;
+}
+
+.menubar__dot--camera {
+  background: var(--color-indicator-camera);
+}
+
+.menubar__dot--microphone {
+  background: var(--color-indicator-microphone);
+}
+
+.menubar__battery-level {
+  font-variant-numeric: tabular-nums;
+}
+
+.menubar__clock {
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+.status-panel {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  min-width: 260px;
+}
+
+.status-panel__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.status-panel__slider {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}

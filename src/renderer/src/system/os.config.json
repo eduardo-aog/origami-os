@@ -1,0 +1,24 @@
+{
+  "name": "OrigamiOS",
+  "version": "1.0",
+  "bootDurationMs": 2500,
+  "startFullscreen": false,
+  "simulatedMemoryMB": 16384,
+  "defaults": {
+    "theme": "light",
+    "accent": "#0A84FF",
+    "wallpaper": "aurora",
+    "timezone": "America/Caracas",
+    "hour24": false
+  },
+  "accentColors": [
+    { "name": "Azul", "value": "#0A84FF" },
+    { "name": "Violeta", "value": "#7D5CFF" },
+    { "name": "Rosa", "value": "#F0508C" },
+    { "name": "Rojo", "value": "#E5453D" },
+    { "name": "Naranja", "value": "#F5873A" },
+    { "name": "Amarillo", "value": "#E3A91B" },
+    { "name": "Verde", "value": "#2FA84F" },
+    { "name": "Grafito", "value": "#7D8696" }
+  ]
+}

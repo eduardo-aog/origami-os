@@ -1,0 +1,64 @@
+.terminal {
+  outline: none;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  padding: var(--space-3);
+  overflow-y: auto;
+  background: var(--color-surface);
+  color: var(--color-text);
+  font-family: var(--font-mono);
+  font-size: var(--font-size-base);
+  line-height: 1.45;
+  user-select: text;
+}
+
+.terminal__line {
+  min-height: 1.45em;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.terminal__tone-dir {
+  color: var(--color-accent);
+  font-weight: var(--font-weight-semibold);
+}
+
+.terminal__tone-error {
+  color: var(--color-danger);
+}
+
+.terminal__tone-muted {
+  color: var(--color-text-tertiary);
+}
+
+.terminal__tone-user {
+  color: var(--color-success);
+  font-weight: var(--font-weight-semibold);
+}
+
+.terminal__tone-path {
+  color: var(--color-accent);
+}
+
+.terminal__prompt {
+  display: flex;
+  align-items: baseline;
+  white-space: pre;
+}
+
+.terminal__input {
+  flex: 1;
+  min-width: 0;
+  padding: 0;
+  border: none;
+  background: none;
+  color: inherit;
+  font: inherit;
+  outline: none;
+  caret-color: var(--color-accent);
+}
+
+.terminal__input:disabled {
+  opacity: 0.6;
+}

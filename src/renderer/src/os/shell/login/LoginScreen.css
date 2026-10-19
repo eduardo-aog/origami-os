@@ -1,0 +1,114 @@
+.login {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-lock);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  color: var(--color-lock-text);
+  animation: login-in var(--duration-slow) var(--ease-out);
+}
+
+@keyframes login-in {
+  from {
+    opacity: 0;
+  }
+}
+
+.login__scrim {
+  position: absolute;
+  inset: 0;
+  background: var(--color-lock-scrim);
+  backdrop-filter: blur(6px);
+}
+
+.login__clock {
+  position: absolute;
+  top: 14vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-shadow: 0 2px 16px var(--shadow-color);
+  transition:
+    opacity var(--duration-base) var(--ease-out),
+    transform var(--duration-base) var(--ease-out);
+}
+
+.login__clock--hidden {
+  opacity: 0;
+  transform: translateY(-12px);
+  pointer-events: none;
+}
+
+.login__time {
+  font-size: var(--font-size-display);
+  font-weight: var(--font-weight-semibold);
+  line-height: 1.1;
+  font-variant-numeric: tabular-nums;
+}
+
+.login__date {
+  font-size: var(--font-size-title);
+  font-weight: var(--font-weight-medium);
+}
+
+.login__hint {
+  margin: var(--space-6) 0 0;
+  font-size: var(--font-size-base);
+  opacity: 0.8;
+}
+
+.login__panel {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-3);
+  width: 280px;
+  padding: var(--space-5);
+  border-radius: var(--radius-card);
+  background: var(--color-lock-panel);
+  backdrop-filter: var(--blur-overlay);
+  animation: login-panel-in var(--duration-base) var(--ease-out);
+}
+
+@keyframes login-panel-in {
+  from {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+}
+
+.login__panel--shake {
+  animation: login-shake 0.45s var(--ease-in-out);
+}
+
+@keyframes login-shake {
+  15%,
+  45%,
+  75% {
+    transform: translateX(-12px);
+  }
+  30%,
+  60%,
+  90% {
+    transform: translateX(12px);
+  }
+}
+
+.login__name {
+  margin: 0;
+  font-size: var(--font-size-title);
+  font-weight: var(--font-weight-semibold);
+  text-shadow: 0 1px 8px var(--shadow-color);
+}
+
+.login__field {
+  align-self: stretch;
+}
+
+.login__panel .os-text-field__error {
+  color: var(--color-lock-text);
+  text-align: center;
+}

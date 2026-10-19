@@ -1,0 +1,38 @@
+{
+  "id": "music",
+  "name": "Música",
+  "description": "Reproduce tu biblioteca de música.",
+  "version": "1.0.0",
+  "author": "",
+  "icon": "icon.svg",
+  "category": "multimedia",
+  "launchpad": {
+    "visible": true,
+    "order": 120
+  },
+  "dock": {
+    "pinnedByDefault": true
+  },
+  "window": {
+    "width": 860,
+    "height": 560,
+    "minWidth": 560,
+    "minHeight": 360,
+    "resizable": true,
+    "singleInstance": true
+  },
+  "fileAssociations": [
+    {
+      "extensions": [
+        "mp3",
+        "ogg",
+        "wav",
+        "flac",
+        "m4a"
+      ],
+      "role": "viewer",
+      "priority": 10
+    }
+  ],
+  "permissions": []
+}

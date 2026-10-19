@@ -1,0 +1,56 @@
+.boot {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-lock);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-6);
+  background: var(--color-boot-bg);
+  color: var(--color-boot-text);
+}
+
+.boot__logo {
+  width: 96px;
+  height: 96px;
+}
+
+.boot__track {
+  width: 180px;
+  height: 4px;
+  overflow: hidden;
+  border-radius: var(--radius-pill);
+  background: var(--color-boot-track);
+}
+
+.boot__fill {
+  width: 100%;
+  height: 100%;
+  border-radius: inherit;
+  background: var(--color-boot-fill);
+  transform-origin: left center;
+  animation: boot-progress linear forwards;
+}
+
+@keyframes boot-progress {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
+.boot__error {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-3);
+  max-width: 420px;
+  text-align: center;
+}
+
+.boot__error p {
+  margin: 0;
+}

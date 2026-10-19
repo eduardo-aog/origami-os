@@ -1,0 +1,34 @@
+{
+  "id": "paint",
+  "name": "Paint",
+  "description": "Dibuja y edita imágenes PNG.",
+  "version": "1.0.0",
+  "author": "",
+  "icon": "icon.svg",
+  "category": "multimedia",
+  "launchpad": {
+    "visible": true,
+    "order": 140
+  },
+  "dock": {
+    "pinnedByDefault": false
+  },
+  "window": {
+    "width": 900,
+    "height": 620,
+    "minWidth": 560,
+    "minHeight": 400,
+    "resizable": true,
+    "singleInstance": false
+  },
+  "fileAssociations": [
+    {
+      "extensions": [
+        "png"
+      ],
+      "role": "editor",
+      "priority": 5
+    }
+  ],
+  "permissions": []
+}

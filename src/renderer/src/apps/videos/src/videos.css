@@ -1,0 +1,182 @@
+.videos {
+  container-type: inline-size;
+  position: relative;
+  display: flex;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  background: var(--color-surface);
+  outline: none;
+}
+
+.videos__stage {
+  position: relative;
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  background: var(--color-stage);
+  color: var(--color-stage-text);
+}
+
+.videos--fullscreen .videos__stage {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+}
+
+.videos__stage--idle {
+  cursor: none;
+}
+
+.videos__video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  background: var(--color-stage);
+}
+
+.videos__message {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0;
+  padding: var(--space-4);
+  color: var(--color-stage-text-secondary);
+  text-align: center;
+  pointer-events: none;
+}
+
+/* Los controles van sobre el video, así que usan los colores del escenario y no los del tema. */
+.videos__controls {
+  --color-hover: var(--color-stage-hover);
+  --color-pressed: var(--color-stage-hover);
+  --color-text-secondary: var(--color-stage-text-secondary);
+  --color-text-tertiary: var(--color-stage-text-secondary);
+  position: absolute;
+  right: var(--space-3);
+  bottom: var(--space-3);
+  left: var(--space-3);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-card);
+  background: var(--color-stage-controls);
+  backdrop-filter: var(--blur-chrome);
+  color: var(--color-stage-text);
+  transition: opacity var(--duration-base) var(--ease-out);
+}
+
+.videos__stage--idle .videos__controls {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.videos__progress {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.videos__time {
+  flex: none;
+  min-width: 38px;
+  font-size: var(--font-size-small);
+  font-variant-numeric: tabular-nums;
+  color: var(--color-stage-text-secondary);
+}
+
+.videos__time:last-child {
+  text-align: right;
+}
+
+.videos__buttons {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.videos__group {
+  display: flex;
+  flex: none;
+  align-items: center;
+  gap: var(--space-1);
+}
+
+.videos__title {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-align: center;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--color-stage-text-secondary);
+}
+
+.videos__volume {
+  width: 72px;
+}
+
+.videos__playlist {
+  flex: none;
+  width: 220px;
+  overflow-y: auto;
+  border-left: 1px solid var(--color-separator);
+  background: var(--color-surface-alt);
+}
+
+.videos__list {
+  margin: 0;
+  padding: var(--space-2);
+  list-style: none;
+}
+
+.videos__item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  width: 100%;
+  padding: var(--space-2) var(--space-3);
+  border: none;
+  border-radius: var(--radius-control);
+  background: none;
+  color: inherit;
+  text-align: left;
+  cursor: default;
+}
+
+.videos__item:hover {
+  background: var(--color-hover);
+}
+
+.videos__item[aria-current='true'] {
+  background: var(--color-selection);
+}
+
+.videos__item:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: -2px;
+}
+
+.videos__item-name {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* En una ventana estrecha la lista se superpone al video en lugar de apretar los controles. */
+@container (max-width: 640px) {
+  .videos__playlist {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 2;
+    box-shadow: var(--shadow-popover);
+  }
+}

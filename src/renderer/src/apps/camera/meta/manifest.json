@@ -1,0 +1,29 @@
+{
+  "id": "camera",
+  "name": "Cámara",
+  "description": "Toma fotos y graba videos con la cámara del equipo.",
+  "version": "1.0.0",
+  "author": "",
+  "icon": "icon.svg",
+  "category": "multimedia",
+  "launchpad": {
+    "visible": true,
+    "order": 160
+  },
+  "dock": {
+    "pinnedByDefault": true
+  },
+  "window": {
+    "width": 760,
+    "height": 580,
+    "minWidth": 480,
+    "minHeight": 400,
+    "resizable": true,
+    "singleInstance": true
+  },
+  "fileAssociations": [],
+  "permissions": [
+    "camera",
+    "microphone"
+  ]
+}

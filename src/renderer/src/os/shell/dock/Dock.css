@@ -1,0 +1,95 @@
+.dock-wrap {
+  position: fixed;
+  left: 0;
+  right: 0;
+  z-index: var(--z-dock);
+  display: flex;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.dock {
+  display: flex;
+  align-items: flex-end;
+  gap: var(--dock-gap, 4px);
+  padding: 8px 10px 4px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-dock);
+  background: var(--color-dock);
+  box-shadow: var(--shadow-dock);
+  backdrop-filter: var(--blur-chrome);
+  pointer-events: auto;
+  user-select: none;
+}
+
+.dock__item {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: var(--dock-icon-size);
+  padding: 0;
+  border: none;
+  background: none;
+  cursor: default;
+}
+
+.dock__icon {
+  display: block;
+  width: var(--dock-icon-size);
+  height: var(--dock-icon-size);
+  transform: scale(var(--dock-scale, 1));
+  transform-origin: bottom center;
+  transition: transform var(--duration-fast) var(--ease-out);
+}
+
+.dock__item:active .dock__icon {
+  filter: brightness(0.85);
+}
+
+.dock__item--highlighted .dock__icon {
+  filter: brightness(1.15) drop-shadow(0 0 6px var(--color-accent));
+}
+
+.dock__dot {
+  width: 4px;
+  height: 4px;
+  margin-top: 2px;
+  border-radius: 50%;
+  background: transparent;
+}
+
+.dock__dot--on {
+  background: var(--color-chrome-text);
+  opacity: 0.7;
+}
+
+.dock__separator {
+  align-self: stretch;
+  width: 1px;
+  margin: 4px var(--dock-gap, 4px) 8px;
+  background: var(--color-separator);
+}
+
+.dock__label {
+  position: absolute;
+  bottom: calc(100% + 30px);
+  left: 50%;
+  padding: 3px var(--space-3);
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  background: var(--color-chrome);
+  color: var(--color-chrome-text);
+  box-shadow: var(--shadow-popover);
+  backdrop-filter: var(--blur-chrome);
+  font-size: var(--font-size-base);
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateX(-50%);
+  transition: opacity var(--duration-fast) var(--ease-out);
+}
+
+.dock__item:hover .dock__label {
+  opacity: 1;
+}

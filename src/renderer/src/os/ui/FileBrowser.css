@@ -1,0 +1,300 @@
+.os-file-browser {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  background: var(--color-surface);
+  color: var(--color-text);
+}
+
+.os-file-browser__sidebar {
+  display: flex;
+  flex: none;
+  flex-direction: column;
+  gap: 2px;
+  width: 150px;
+  padding: var(--space-2);
+  border-right: 1px solid var(--color-separator);
+  background: var(--color-surface-alt);
+}
+
+.os-file-browser__place {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: 4px var(--space-2);
+  border: none;
+  border-radius: 5px;
+  background: none;
+  text-align: left;
+  cursor: default;
+}
+
+.os-file-browser__place:hover:not(:disabled) {
+  background: var(--color-hover);
+}
+
+.os-file-browser__place[data-drop='true'],
+.os-file-browser__path button[data-drop='true'] {
+  background: var(--color-selection);
+  outline: 1px solid var(--color-selection-border);
+}
+
+.os-file-browser__place[aria-current='true'] {
+  background: var(--color-accent-soft);
+  color: var(--color-accent);
+}
+
+.os-file-browser__main {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.os-file-browser__toolbar {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding: var(--space-2);
+  border-bottom: 1px solid var(--color-separator);
+}
+
+.os-file-browser__path {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  min-width: 0;
+  margin: 0 var(--space-2);
+  padding: 0;
+  overflow: hidden;
+  list-style: none;
+  color: var(--color-text-secondary);
+  white-space: nowrap;
+}
+
+.os-file-browser__path li + li::before {
+  content: '›';
+  margin: 0 2px;
+  color: var(--color-text-tertiary);
+}
+
+.os-file-browser__path button {
+  padding: 2px 4px;
+  border: none;
+  border-radius: 4px;
+  background: none;
+  color: inherit;
+  cursor: default;
+}
+
+.os-file-browser__path button:hover {
+  background: var(--color-hover);
+}
+
+.os-file-browser__path li:last-child button {
+  color: var(--color-text);
+  font-weight: var(--font-weight-medium);
+}
+
+.os-file-browser__create {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-2);
+  padding: var(--space-2);
+  border-bottom: 1px solid var(--color-separator);
+}
+
+.os-file-browser__create .os-text-field {
+  flex: 1;
+}
+
+.os-file-browser__create-button {
+  min-height: 32px;
+  padding: 0 var(--space-3);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-control);
+  background: var(--color-surface-raised);
+  cursor: default;
+}
+
+.os-file-browser__create-button:disabled {
+  opacity: 0.5;
+}
+
+.os-file-browser__table {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-height: 0;
+  outline: none;
+  container-type: inline-size;
+}
+
+.os-file-browser__table:focus-visible {
+  box-shadow: inset 0 0 0 2px var(--color-accent-soft);
+}
+
+.os-file-browser__body {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+}
+
+.os-file-browser__body[data-drop='true'] {
+  box-shadow: inset 0 0 0 2px var(--color-selection-border);
+}
+
+.os-file-browser__row {
+  display: grid;
+  grid-template-columns: minmax(120px, 3fr) 80px minmax(80px, 1.2fr) minmax(110px, 1.6fr);
+  align-items: center;
+  gap: var(--space-2);
+  padding: 3px var(--space-3);
+  color: var(--color-text-secondary);
+  white-space: nowrap;
+}
+
+.os-file-browser__row > span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* En un explorador estrecho se oculta la columna "Tipo" para que la lista no desborde. */
+@container (max-width: 470px) {
+  .os-file-browser__row {
+    grid-template-columns: minmax(100px, 3fr) 70px minmax(100px, 1.6fr);
+  }
+
+  .os-file-browser__row > :nth-child(3) {
+    display: none;
+  }
+}
+
+.os-file-browser__row--head {
+  border-bottom: 1px solid var(--color-separator);
+  background: var(--color-surface);
+  font-weight: var(--font-weight-medium);
+}
+
+.os-file-browser__heading {
+  padding: 3px 0;
+  border: none;
+  background: none;
+  color: var(--color-text-secondary);
+  font-weight: var(--font-weight-medium);
+  text-align: left;
+  cursor: default;
+}
+
+.os-file-browser__row[aria-selected='true'] {
+  background: var(--color-accent);
+  color: var(--color-on-accent);
+}
+
+.os-file-browser__row--disabled {
+  color: var(--color-text-tertiary);
+}
+
+.os-file-browser__name {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-width: 0;
+  color: var(--color-text);
+}
+
+.os-file-browser__row[aria-selected='true'] .os-file-browser__name {
+  color: inherit;
+}
+
+.os-file-browser__name span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.os-file-browser__empty {
+  height: 100%;
+  min-height: 160px;
+}
+
+.os-file-browser__save {
+  padding: var(--space-2) var(--space-3);
+  border-top: 1px solid var(--color-separator);
+}
+
+.os-file-browser__row[data-drop='true'] {
+  background: var(--color-selection);
+  color: var(--color-text);
+  outline: 1px solid var(--color-selection-border);
+  outline-offset: -1px;
+}
+
+.os-file-browser__rename {
+  flex: 1;
+  min-width: 0;
+  padding: 0 4px;
+  border: 1px solid var(--color-accent);
+  border-radius: 4px;
+  background: var(--color-surface);
+  color: var(--color-text);
+  outline: none;
+  user-select: text;
+  box-shadow: 0 0 0 3px var(--color-accent-soft);
+}
+
+.os-file-browser__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(96px, 1fr));
+  align-content: start;
+  gap: var(--space-2);
+  padding: var(--space-3);
+}
+
+.os-file-browser__tile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-1);
+  padding: var(--space-2) var(--space-1);
+  border-radius: var(--radius-control);
+  color: var(--color-text);
+  text-align: center;
+}
+
+.os-file-browser__tile[aria-selected='true'] {
+  background: var(--color-accent-soft);
+}
+
+.os-file-browser__tile[data-drop='true'] {
+  background: var(--color-selection);
+  outline: 1px solid var(--color-selection-border);
+}
+
+.os-file-browser__tile-name {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  min-width: 0;
+}
+
+.os-file-browser__tile-name > span {
+  display: -webkit-box;
+  max-width: 100%;
+  padding: 0 4px;
+  overflow: hidden;
+  border-radius: 4px;
+  line-height: 1.25;
+  overflow-wrap: anywhere;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+.os-file-browser__tile[aria-selected='true'] .os-file-browser__tile-name > span {
+  background: var(--color-accent);
+  color: var(--color-on-accent);
+}
+
+.os-file-browser__tile .os-file-browser__rename {
+  text-align: center;
+}

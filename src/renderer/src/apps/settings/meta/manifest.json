@@ -1,0 +1,29 @@
+{
+  "id": "settings",
+  "name": "Configuración",
+  "description": "Personaliza la apariencia, el sonido y tu cuenta.",
+  "version": "1.0.0",
+  "author": "",
+  "icon": "icon.svg",
+  "category": "sistema",
+  "launchpad": {
+    "visible": true,
+    "order": 40
+  },
+  "dock": {
+    "pinnedByDefault": true
+  },
+  "window": {
+    "width": 780,
+    "height": 540,
+    "minWidth": 600,
+    "minHeight": 400,
+    "resizable": true,
+    "singleInstance": true
+  },
+  "fileAssociations": [],
+  "permissions": [
+    "settings:write",
+    "system:account"
+  ]
+}

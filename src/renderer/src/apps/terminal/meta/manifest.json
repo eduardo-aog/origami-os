@@ -1,0 +1,26 @@
+{
+  "id": "terminal",
+  "name": "Terminal",
+  "description": "Usa la línea de comandos para trabajar con tus archivos y ejecutar programas de Python.",
+  "version": "1.0.0",
+  "author": "",
+  "icon": "icon.svg",
+  "category": "utilidades",
+  "launchpad": {
+    "visible": true,
+    "order": 30
+  },
+  "dock": {
+    "pinnedByDefault": true
+  },
+  "window": {
+    "width": 720,
+    "height": 460,
+    "minWidth": 420,
+    "minHeight": 260,
+    "resizable": true,
+    "singleInstance": false
+  },
+  "fileAssociations": [],
+  "permissions": ["python"]
+}

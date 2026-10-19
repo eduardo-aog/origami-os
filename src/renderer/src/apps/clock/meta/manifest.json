@@ -1,0 +1,26 @@
+{
+  "id": "clock",
+  "name": "Reloj",
+  "description": "Reloj mundial, alarmas, temporizador y cronómetro.",
+  "version": "1.0.0",
+  "author": "",
+  "icon": "icon.svg",
+  "category": "utilidades",
+  "launchpad": {
+    "visible": true,
+    "order": 80
+  },
+  "dock": {
+    "pinnedByDefault": false
+  },
+  "window": {
+    "width": 720,
+    "height": 500,
+    "minWidth": 480,
+    "minHeight": 380,
+    "resizable": true,
+    "singleInstance": false
+  },
+  "fileAssociations": [],
+  "permissions": []
+}

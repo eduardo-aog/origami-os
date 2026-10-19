@@ -1,0 +1,313 @@
+.calendar {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  background: var(--color-surface);
+  outline: none;
+}
+
+.calendar__title {
+  margin: 0 var(--space-2);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: var(--font-size-large);
+  font-weight: var(--font-weight-semibold);
+}
+
+.calendar__content {
+  position: relative;
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-height: 0;
+  overflow: hidden;
+}
+
+/* ── Vista de mes ── */
+.calendar__month {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.calendar__weekdays {
+  display: grid;
+  flex: none;
+  grid-template-columns: repeat(7, 1fr);
+  border-bottom: 1px solid var(--color-separator);
+}
+
+.calendar__weekday {
+  padding: var(--space-1) var(--space-2);
+  text-align: right;
+  font-size: var(--font-size-small);
+  text-transform: uppercase;
+  color: var(--color-text-secondary);
+}
+
+.calendar__days {
+  display: grid;
+  flex: 1;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  grid-template-rows: repeat(6, minmax(0, 1fr));
+  min-height: 0;
+}
+
+.calendar__day {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+  min-height: 0;
+  padding: var(--space-1);
+  overflow: hidden;
+  border-right: 1px solid var(--color-separator);
+  border-bottom: 1px solid var(--color-separator);
+  outline: none;
+}
+
+.calendar__day:nth-child(7n) {
+  border-right: none;
+}
+
+.calendar__day:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: -2px;
+}
+
+.calendar__day--outside {
+  background: var(--color-surface-alt);
+  color: var(--color-text-tertiary);
+}
+
+.calendar__day--selected {
+  background: var(--color-accent-soft);
+}
+
+.calendar__day-number {
+  align-self: flex-end;
+  min-width: 22px;
+  padding: 1px 5px;
+  border-radius: var(--radius-pill);
+  text-align: center;
+  font-size: var(--font-size-small);
+}
+
+.calendar__day--today .calendar__day-number {
+  background: var(--color-accent);
+  color: var(--color-on-accent);
+  font-weight: var(--font-weight-semibold);
+}
+
+.calendar__chips {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-height: 0;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  list-style: none;
+}
+
+.calendar__chip {
+  display: block;
+  width: 100%;
+  padding: 1px 5px;
+  overflow: hidden;
+  border: none;
+  border-radius: 4px;
+  background: var(--color-accent-soft);
+  color: var(--color-text);
+  text-align: left;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: var(--font-size-small);
+  cursor: default;
+}
+
+.calendar__chip:hover {
+  background: var(--color-selection);
+}
+
+.calendar__chip-time {
+  color: var(--color-text-secondary);
+}
+
+.calendar__more {
+  padding: 0 5px;
+  font-size: var(--font-size-small);
+  color: var(--color-text-secondary);
+}
+
+/* ── Vista de día ── */
+.calendar__day-view {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+}
+
+.calendar__timeline {
+  position: relative;
+  margin-right: var(--space-3);
+}
+
+.calendar__hour {
+  position: absolute;
+  right: 0;
+  left: 0;
+  border-top: 1px solid var(--color-separator);
+}
+
+.calendar__hour-label {
+  position: absolute;
+  top: -8px;
+  left: 0;
+  width: 64px;
+  padding-right: var(--space-2);
+  text-align: right;
+  font-size: var(--font-size-small);
+  color: var(--color-text-secondary);
+}
+
+.calendar__slot {
+  position: absolute;
+  inset: 0 0 0 72px;
+  padding: 0;
+  border: none;
+  background: none;
+  cursor: default;
+}
+
+.calendar__slot:hover {
+  background: var(--color-hover);
+}
+
+.calendar__slot:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: -2px;
+}
+
+.calendar__events {
+  position: absolute;
+  inset: 0 0 0 72px;
+  pointer-events: none;
+}
+
+.calendar__event {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  padding: 2px var(--space-2);
+  overflow: hidden;
+  border: 1px solid var(--color-accent);
+  border-left-width: 3px;
+  border-radius: 5px;
+  background: var(--color-accent-soft);
+  color: var(--color-text);
+  text-align: left;
+  cursor: default;
+  pointer-events: auto;
+}
+
+.calendar__event:hover {
+  background: var(--color-selection);
+}
+
+.calendar__event-title {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-weight: var(--font-weight-medium);
+}
+
+.calendar__event-time {
+  font-size: var(--font-size-small);
+  color: var(--color-text-secondary);
+}
+
+.calendar__now {
+  position: absolute;
+  right: 0;
+  left: 72px;
+  height: 2px;
+  background: var(--color-danger);
+  pointer-events: none;
+}
+
+/* ── Panel del evento ── */
+.calendar__panel {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  width: 300px;
+  max-width: 100%;
+  border-left: 1px solid var(--color-separator);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-popover);
+  animation: calendar-panel-in var(--duration-base) var(--ease-out);
+}
+
+@keyframes calendar-panel-in {
+  from {
+    transform: translateX(24px);
+    opacity: 0;
+  }
+}
+
+.calendar__panel-header {
+  display: flex;
+  flex: none;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-2) var(--space-3);
+  border-bottom: 1px solid var(--color-separator);
+}
+
+.calendar__panel-title {
+  margin: 0;
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-semibold);
+}
+
+.calendar__panel-form {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: var(--space-3);
+  min-height: 0;
+  padding: var(--space-3);
+  overflow-y: auto;
+}
+
+.calendar__panel-times {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-2);
+}
+
+.calendar__panel-error {
+  margin: 0;
+  font-size: var(--font-size-small);
+  color: var(--color-danger);
+}
+
+.calendar__panel-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-top: auto;
+}
+
+.calendar__panel-spacer {
+  flex: 1;
+}

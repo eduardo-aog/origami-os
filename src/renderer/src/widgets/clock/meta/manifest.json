@@ -1,0 +1,12 @@
+{
+  "id": "clock",
+  "name": "Reloj",
+  "description": "Hora y fecha actuales.",
+  "icon": "icon.svg",
+  "sizes": [
+    "small",
+    "medium"
+  ],
+  "defaultSize": "small",
+  "ownerApp": null
+}

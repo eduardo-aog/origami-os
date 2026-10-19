@@ -1,0 +1,82 @@
+.launchpad {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-launchpad);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-5);
+  padding: calc(var(--menubar-height) + var(--space-5)) var(--space-6) var(--space-6);
+  background: var(--color-overlay);
+  backdrop-filter: var(--blur-overlay);
+  overflow-y: auto;
+  animation: launchpad-in var(--duration-slow) var(--ease-out);
+}
+
+@keyframes launchpad-in {
+  from {
+    opacity: 0;
+    backdrop-filter: blur(0);
+    transform: scale(1.06);
+  }
+}
+
+.launchpad__search {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  width: 240px;
+  height: 28px;
+  padding: 0 var(--space-3);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-pill);
+  background: var(--color-chrome);
+  color: var(--color-chrome-text);
+  box-shadow: var(--shadow-control);
+}
+
+.launchpad__search input {
+  flex: 1;
+  min-width: 0;
+  border: none;
+  background: none;
+  outline: none;
+  user-select: text;
+}
+
+.launchpad__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+  gap: var(--space-5) var(--space-3);
+  width: min(960px, 100%);
+}
+
+.launchpad__app {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2);
+  border: none;
+  border-radius: var(--radius-card);
+  background: none;
+  color: var(--color-lock-text);
+  cursor: default;
+}
+
+.launchpad__app:hover {
+  background: var(--color-lock-panel);
+}
+
+.launchpad__name {
+  max-width: 120px;
+  text-align: center;
+  text-shadow: 0 1px 6px var(--shadow-color-strong);
+}
+
+.launchpad__empty {
+  grid-column: 1 / -1;
+  margin: var(--space-6) 0;
+  text-align: center;
+  color: var(--color-lock-text);
+}

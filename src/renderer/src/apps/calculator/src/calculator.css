@@ -1,0 +1,189 @@
+.calculator {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  overflow: hidden;
+  background: var(--color-surface);
+  outline: none;
+  user-select: none;
+}
+
+.calculator__display {
+  position: relative;
+  display: flex;
+  flex: none;
+  flex-direction: column;
+  justify-content: flex-end;
+  height: 128px;
+  padding: var(--space-3) var(--space-4) var(--space-2);
+  text-align: right;
+}
+
+.calculator__tools {
+  position: absolute;
+  top: var(--space-2);
+  left: var(--space-2);
+  display: flex;
+  gap: var(--space-1);
+  color: var(--color-text-secondary);
+}
+
+.calculator__expression {
+  min-height: 18px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--color-text-secondary);
+}
+
+.calculator__value {
+  overflow: hidden;
+  font-size: 44px;
+  font-weight: var(--font-weight-regular);
+  line-height: 1.15;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+.calculator__value--small {
+  font-size: 34px;
+}
+
+.calculator__value--xs {
+  font-size: 24px;
+}
+
+.calculator__value--error {
+  font-size: 26px;
+  color: var(--color-danger);
+}
+
+.calculator__keypad {
+  display: grid;
+  flex: 1;
+  grid-template-columns: repeat(4, 1fr);
+  grid-template-rows: repeat(5, 1fr);
+  gap: var(--space-2);
+  min-height: 0;
+  padding: var(--space-3);
+  border-top: 1px solid var(--color-separator);
+  background: var(--color-surface-alt);
+}
+
+.calculator .calculator__key {
+  min-height: 0;
+  padding: 0;
+  font-size: 20px;
+  font-weight: var(--font-weight-regular);
+}
+
+.calculator .calculator__key--function {
+  background: var(--color-pressed);
+}
+
+.calculator .calculator__key--operator {
+  border-color: transparent;
+  background: var(--color-accent);
+  color: var(--color-on-accent);
+}
+
+.calculator .calculator__key--operator:hover:not(:disabled) {
+  background: var(--color-accent-strong);
+}
+
+.calculator .calculator__key--active {
+  background: var(--color-surface-raised);
+  color: var(--color-accent);
+}
+
+.calculator .calculator__key--active:hover:not(:disabled) {
+  background: var(--color-surface-raised);
+}
+
+.calculator .calculator__key--wide {
+  grid-column: span 2;
+}
+
+.calculator__history {
+  position: absolute;
+  inset: 0 0 0 auto;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  width: 78%;
+  border-left: 1px solid var(--color-separator);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-popover);
+  transform: translateX(100%);
+  visibility: hidden;
+  transition:
+    transform var(--duration-base) var(--ease-out),
+    visibility 0s var(--duration-base);
+}
+
+.calculator__history--open {
+  transform: none;
+  visibility: visible;
+  transition: transform var(--duration-base) var(--ease-out);
+}
+
+.calculator__history-header {
+  display: flex;
+  flex: none;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-2) var(--space-3);
+  border-bottom: 1px solid var(--color-separator);
+}
+
+.calculator__history-title {
+  margin: 0;
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-semibold);
+}
+
+.calculator__history-list {
+  flex: 1;
+  margin: 0;
+  padding: 0;
+  overflow-y: auto;
+  list-style: none;
+}
+
+.calculator__history-item {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+  width: 100%;
+  padding: var(--space-2) var(--space-4);
+  border: none;
+  border-bottom: 1px solid var(--color-separator);
+  background: none;
+  text-align: right;
+  cursor: default;
+}
+
+.calculator__history-item:hover {
+  background: var(--color-hover);
+}
+
+.calculator__history-expression {
+  font-size: var(--font-size-small);
+  color: var(--color-text-secondary);
+}
+
+.calculator__history-result {
+  font-size: var(--font-size-large);
+}
+
+.calculator__history-footer {
+  display: flex;
+  flex: none;
+  justify-content: center;
+  padding: var(--space-3);
+  border-top: 1px solid var(--color-separator);
+}

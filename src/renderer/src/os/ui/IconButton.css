@@ -1,0 +1,35 @@
+.os-icon-button {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 24px;
+  padding: 0;
+  border: none;
+  border-radius: 5px;
+  background: none;
+  color: inherit;
+  cursor: default;
+}
+
+.os-icon-button:hover:not(:disabled) {
+  background: var(--color-hover);
+}
+
+.os-icon-button:active:not(:disabled) {
+  background: var(--color-pressed);
+}
+
+.os-icon-button:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 1px;
+}
+
+.os-icon-button:disabled {
+  color: var(--color-text-tertiary);
+}
+
+.os-icon-button--active {
+  background: var(--color-pressed);
+}

@@ -1,0 +1,26 @@
+{
+  "id": "help",
+  "name": "Ayuda",
+  "description": "Aprende a usar el sistema y cada una de sus aplicaciones.",
+  "version": "1.0.0",
+  "author": "",
+  "icon": "icon.svg",
+  "category": "sistema",
+  "launchpad": {
+    "visible": true,
+    "order": 170
+  },
+  "dock": {
+    "pinnedByDefault": false
+  },
+  "window": {
+    "width": 820,
+    "height": 580,
+    "minWidth": 520,
+    "minHeight": 360,
+    "resizable": true,
+    "singleInstance": true
+  },
+  "fileAssociations": [],
+  "permissions": []
+}

@@ -1,0 +1,13 @@
+{
+  "id": "quick-note",
+  "name": "Nota rápida",
+  "description": "Un bloc de texto con autoguardado, siempre a la vista.",
+  "icon": "icon.svg",
+  "sizes": [
+    "small",
+    "medium",
+    "large"
+  ],
+  "defaultSize": "medium",
+  "ownerApp": null
+}

@@ -1,0 +1,40 @@
+{
+  "id": "image-viewer",
+  "name": "Visor de imágenes",
+  "description": "Mira tus imágenes con zoom, rotación y navegación por carpeta.",
+  "version": "1.0.0",
+  "author": "",
+  "icon": "icon.svg",
+  "category": "multimedia",
+  "launchpad": {
+    "visible": true,
+    "order": 110
+  },
+  "dock": {
+    "pinnedByDefault": false
+  },
+  "window": {
+    "width": 820,
+    "height": 580,
+    "minWidth": 420,
+    "minHeight": 320,
+    "resizable": true,
+    "singleInstance": false
+  },
+  "fileAssociations": [
+    {
+      "extensions": [
+        "png",
+        "jpg",
+        "jpeg",
+        "gif",
+        "webp",
+        "svg",
+        "bmp"
+      ],
+      "role": "viewer",
+      "priority": 10
+    }
+  ],
+  "permissions": []
+}

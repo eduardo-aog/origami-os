@@ -1,0 +1,26 @@
+{
+  "id": "calculator",
+  "name": "Calculadora",
+  "description": "Realiza operaciones aritméticas básicas.",
+  "version": "1.0.0",
+  "author": "",
+  "icon": "icon.svg",
+  "category": "utilidades",
+  "launchpad": {
+    "visible": true,
+    "order": 50
+  },
+  "dock": {
+    "pinnedByDefault": false
+  },
+  "window": {
+    "width": 320,
+    "height": 480,
+    "minWidth": 320,
+    "minHeight": 480,
+    "resizable": false,
+    "singleInstance": false
+  },
+  "fileAssociations": [],
+  "permissions": []
+}

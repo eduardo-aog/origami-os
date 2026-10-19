@@ -1,0 +1,155 @@
+/*
+ * Tokens de diseño del sistema. Ningún componente usa colores escritos a mano:
+ * todo sale de estas variables.
+ *
+ * Los colores usan light-dark(claro, oscuro). El tema se elige con el atributo
+ * data-theme del elemento <html>:
+ *   light → siempre claro | dark → siempre oscuro | auto → sigue prefers-color-scheme
+ * Sin atributo, el sistema arranca en claro (valor por defecto de os.config.json).
+ */
+
+:root {
+  color-scheme: light;
+
+  /* ── Tipografía ─────────────────────────────────────────── */
+  --font-sans: 'Inter', 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  --font-mono: 'JetBrains Mono', 'Cascadia Code', 'DejaVu Sans Mono', Menlo, Consolas, monospace;
+  --font-size-small: 11px;
+  --font-size-base: 13px;
+  --font-size-large: 15px;
+  --font-size-title: 20px;
+  --font-size-display: 64px;
+  --font-weight-regular: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --line-height-base: 1.4;
+
+  /* ── Colores: base ──────────────────────────────────────── */
+  --color-bg: light-dark(#e9ebf0, #121316);
+  --color-surface: light-dark(#ffffff, #1f2024);
+  --color-surface-alt: light-dark(#f3f4f7, #282a2f);
+  --color-surface-raised: light-dark(#ffffff, #2d2f35);
+  --color-text: light-dark(#1b1c1f, #f1f2f4);
+  --color-text-secondary: light-dark(#5b5f69, #aeb2bc);
+  --color-text-tertiary: light-dark(#8b8f99, #7c808b);
+  --color-border: light-dark(rgb(0 0 0 / 0.12), rgb(255 255 255 / 0.14));
+  --color-separator: light-dark(rgb(0 0 0 / 0.08), rgb(255 255 255 / 0.1));
+  --color-hover: light-dark(rgb(0 0 0 / 0.06), rgb(255 255 255 / 0.08));
+  --color-pressed: light-dark(rgb(0 0 0 / 0.12), rgb(255 255 255 / 0.14));
+  --color-overlay: light-dark(rgb(0 0 0 / 0.28), rgb(0 0 0 / 0.5));
+
+  /* ── Colores: acento y estados ──────────────────────────── */
+  --color-accent: #0a84ff;
+  --color-accent-soft: color-mix(in srgb, var(--color-accent) 18%, transparent);
+  --color-accent-strong: color-mix(in srgb, var(--color-accent) 85%, black);
+  --color-on-accent: #ffffff;
+  --color-danger: light-dark(#e5453d, #ff6b61);
+  --color-success: light-dark(#2fa84f, #43c463);
+  --color-warning: light-dark(#d98a0b, #f2b02e);
+  --color-selection: color-mix(in srgb, var(--color-accent) 28%, transparent);
+  --color-selection-border: var(--color-accent);
+
+  /* ── Colores: cromo del sistema (barra de menú, Dock, ventanas) ── */
+  --color-chrome: light-dark(rgb(255 255 255 / 0.62), rgb(28 29 33 / 0.62));
+  --color-chrome-text: light-dark(#14151a, #f5f6f8);
+  --color-dock: light-dark(rgb(255 255 255 / 0.45), rgb(40 42 48 / 0.5));
+  --color-titlebar: light-dark(rgb(246 247 250 / 0.92), rgb(44 46 52 / 0.92));
+  --color-titlebar-inactive: light-dark(rgb(238 239 243 / 0.92), rgb(34 35 40 / 0.92));
+  --color-window-border: light-dark(rgb(0 0 0 / 0.16), rgb(255 255 255 / 0.12));
+  --color-traffic-close: #f2574f;
+  --color-traffic-minimize: #f5b73b;
+  --color-traffic-maximize: #3dc654;
+  --color-traffic-inactive: light-dark(#c9ccd3, #4a4d56);
+  --color-traffic-glyph: rgb(0 0 0 / 0.55);
+  --color-traffic-border: rgb(0 0 0 / 0.12);
+  --color-indicator-camera: #30d158;
+  --color-indicator-microphone: #ff9f0a;
+
+  /* ── Colores: arranque, bloqueo y apagado (siempre sobre fondo oscuro) ── */
+  --color-boot-bg: #000000;
+  --color-boot-track: rgb(255 255 255 / 0.18);
+  --color-boot-fill: #ffffff;
+  --color-boot-text: rgb(255 255 255 / 0.85);
+  --color-lock-text: #ffffff;
+  --color-lock-scrim: rgb(0 0 0 / 0.28);
+  --color-lock-panel: rgb(255 255 255 / 0.16);
+
+  /* ── Colores: escenario multimedia (visor, video, cámara; siempre oscuro) ── */
+  --color-stage: #000000;
+  --color-stage-text: rgb(255 255 255 / 0.92);
+  --color-stage-text-secondary: rgb(255 255 255 / 0.65);
+  --color-stage-controls: rgb(20 20 24 / 0.72);
+  --color-stage-hover: rgb(255 255 255 / 0.16);
+  --color-flash: #ffffff;
+  --color-recording: #ff453a;
+
+  /* ── Colores: escritorio y widgets ── */
+  --color-desktop-text: #ffffff;
+  --color-widget: light-dark(rgb(255 255 255 / 0.72), rgb(34 36 42 / 0.72));
+  --color-toast: light-dark(rgb(255 255 255 / 0.82), rgb(40 42 48 / 0.82));
+
+  /* ── Radios ─────────────────────────────────────────────── */
+  --radius-window: 10px;
+  --radius-dock: 18px;
+  --radius-card: 12px;
+  --radius-control: 6px;
+  --radius-popover: 10px;
+  --radius-pill: 999px;
+
+  /* ── Sombras ────────────────────────────────────────────── */
+  --shadow-color: light-dark(rgb(0 0 0 / 0.2), rgb(0 0 0 / 0.55));
+  --shadow-color-strong: light-dark(rgb(0 0 0 / 0.32), rgb(0 0 0 / 0.75));
+  --shadow-window: 0 18px 48px var(--shadow-color-strong), 0 2px 8px var(--shadow-color);
+  --shadow-window-inactive: 0 10px 30px var(--shadow-color);
+  --shadow-popover: 0 8px 28px var(--shadow-color-strong);
+  --shadow-dock: 0 10px 30px var(--shadow-color);
+  --shadow-control: 0 1px 2px var(--shadow-color);
+
+  /* ── Desenfoque translúcido ─────────────────────────────── */
+  --blur-chrome: blur(24px) saturate(180%);
+  --blur-overlay: blur(40px) saturate(160%);
+
+  /* ── Medidas del shell ──────────────────────────────────── */
+  --menubar-height: 28px;
+  --titlebar-height: 38px;
+  --dock-icon-size: 56px;
+  --dock-gap: 4px;
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+
+  /* ── Animación ──────────────────────────────────────────── */
+  --duration-fast: 150ms;
+  --duration-base: 200ms;
+  --duration-slow: 250ms;
+  --ease-out: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* ── Capas ──────────────────────────────────────────────── */
+  --z-wallpaper: 0;
+  --z-widgets: 10;
+  --z-desktop-icons: 20;
+  --z-windows: 100;
+  --z-dock: 9000;
+  --z-menubar: 9100;
+  --z-launchpad: 9200;
+  --z-popover: 9300;
+  --z-dialog: 9400;
+  --z-toast: 9500;
+  --z-lock: 9900;
+}
+
+:root[data-theme='light'] {
+  color-scheme: light;
+}
+
+:root[data-theme='dark'] {
+  color-scheme: dark;
+}
+
+:root[data-theme='auto'] {
+  color-scheme: light dark;
+}

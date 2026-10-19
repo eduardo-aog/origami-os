@@ -1,0 +1,28 @@
+{
+  "id": "voice-recorder",
+  "name": "Grabadora de voz",
+  "description": "Graba audio con el micrófono y gestiona tus grabaciones.",
+  "version": "1.0.0",
+  "author": "",
+  "icon": "icon.svg",
+  "category": "multimedia",
+  "launchpad": {
+    "visible": true,
+    "order": 150
+  },
+  "dock": {
+    "pinnedByDefault": false
+  },
+  "window": {
+    "width": 560,
+    "height": 460,
+    "minWidth": 420,
+    "minHeight": 340,
+    "resizable": true,
+    "singleInstance": false
+  },
+  "fileAssociations": [],
+  "permissions": [
+    "microphone"
+  ]
+}

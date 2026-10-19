@@ -1,0 +1,6 @@
+.os-avatar {
+  flex: none;
+  border-radius: 50%;
+  object-fit: cover;
+  background: var(--color-surface-alt);
+}

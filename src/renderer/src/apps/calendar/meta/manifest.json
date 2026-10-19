@@ -1,0 +1,26 @@
+{
+  "id": "calendar",
+  "name": "Calendario",
+  "description": "Organiza tus eventos y recibe recordatorios.",
+  "version": "1.0.0",
+  "author": "",
+  "icon": "icon.svg",
+  "category": "productividad",
+  "launchpad": {
+    "visible": true,
+    "order": 70
+  },
+  "dock": {
+    "pinnedByDefault": true
+  },
+  "window": {
+    "width": 920,
+    "height": 620,
+    "minWidth": 640,
+    "minHeight": 420,
+    "resizable": true,
+    "singleInstance": false
+  },
+  "fileAssociations": [],
+  "permissions": []
+}

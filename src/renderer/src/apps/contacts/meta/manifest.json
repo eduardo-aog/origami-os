@@ -1,0 +1,26 @@
+{
+  "id": "contacts",
+  "name": "Contactos",
+  "description": "Guarda los datos de las personas que conoces.",
+  "version": "1.0.0",
+  "author": "",
+  "icon": "icon.svg",
+  "category": "productividad",
+  "launchpad": {
+    "visible": true,
+    "order": 100
+  },
+  "dock": {
+    "pinnedByDefault": false
+  },
+  "window": {
+    "width": 840,
+    "height": 560,
+    "minWidth": 600,
+    "minHeight": 380,
+    "resizable": true,
+    "singleInstance": false
+  },
+  "fileAssociations": [],
+  "permissions": []
+}

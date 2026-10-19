@@ -1,0 +1,89 @@
+.viewer {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  background: var(--color-surface);
+  outline: none;
+}
+
+.viewer__toolbar {
+  gap: var(--space-1);
+}
+
+.viewer__percent {
+  flex: none;
+  min-width: 48px;
+  height: 24px;
+  padding: 0 var(--space-1);
+  border: none;
+  border-radius: 5px;
+  background: none;
+  color: var(--color-text-secondary);
+  font-variant-numeric: tabular-nums;
+  cursor: default;
+}
+
+.viewer__percent:hover {
+  background: var(--color-hover);
+}
+
+.viewer__percent:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 1px;
+}
+
+.viewer__counter {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--color-text-secondary);
+  font-variant-numeric: tabular-nums;
+}
+
+.viewer__stage {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+  background: var(--color-stage);
+  touch-action: none;
+  user-select: none;
+}
+
+.viewer__stage--pannable {
+  cursor: grab;
+}
+
+.viewer__stage--dragging {
+  cursor: grabbing;
+}
+
+.viewer__canvas {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  display: block;
+  max-width: none;
+  max-height: none;
+  transition: transform var(--duration-fast) var(--ease-out);
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+.viewer__stage--dragging .viewer__canvas {
+  transition: none;
+}
+
+.viewer__message {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-4);
+  color: var(--color-stage-text-secondary);
+  text-align: center;
+}

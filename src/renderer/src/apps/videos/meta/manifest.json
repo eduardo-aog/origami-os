@@ -1,0 +1,43 @@
+{
+  "id": "videos",
+  "name": "Videos",
+  "description": "Reproduce videos con controles propios.",
+  "version": "1.0.0",
+  "author": "",
+  "icon": "icon.svg",
+  "category": "multimedia",
+  "launchpad": {
+    "visible": true,
+    "order": 130
+  },
+  "dock": {
+    "pinnedByDefault": false
+  },
+  "window": {
+    "width": 860,
+    "height": 560,
+    "minWidth": 480,
+    "minHeight": 340,
+    "resizable": true,
+    "singleInstance": false
+  },
+  "fileAssociations": [
+    {
+      "extensions": [
+        "mp4",
+        "webm",
+        "mov"
+      ],
+      "role": "viewer",
+      "priority": 10
+    },
+    {
+      "extensions": [
+        "ogg"
+      ],
+      "role": "viewer",
+      "priority": 5
+    }
+  ],
+  "permissions": []
+}

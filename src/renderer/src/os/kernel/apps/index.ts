@@ -1,0 +1,5 @@
+export * from './manifest.schema'
+export type { AppContext, LaunchArgs } from './types'
+export { FILES_APP_ID, SETTINGS_APP_ID } from './system-apps'
+export { apps, widgets, getApp, getWidget } from './registry'
+export type { AppDefinition, WidgetDefinition } from './registry'

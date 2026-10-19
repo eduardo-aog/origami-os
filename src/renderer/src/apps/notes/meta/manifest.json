@@ -1,0 +1,26 @@
+{
+  "id": "notes",
+  "name": "Notas",
+  "description": "Escribe y guarda notas rápidas con autoguardado.",
+  "version": "1.0.0",
+  "author": "",
+  "icon": "icon.svg",
+  "category": "productividad",
+  "launchpad": {
+    "visible": true,
+    "order": 90
+  },
+  "dock": {
+    "pinnedByDefault": true
+  },
+  "window": {
+    "width": 800,
+    "height": 540,
+    "minWidth": 520,
+    "minHeight": 340,
+    "resizable": true,
+    "singleInstance": false
+  },
+  "fileAssociations": [],
+  "permissions": []
+}

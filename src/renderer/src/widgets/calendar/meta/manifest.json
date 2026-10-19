@@ -1,0 +1,12 @@
+{
+  "id": "calendar",
+  "name": "Calendario",
+  "description": "Mes actual y próximos eventos.",
+  "icon": "icon.svg",
+  "sizes": [
+    "medium",
+    "large"
+  ],
+  "defaultSize": "medium",
+  "ownerApp": "calendar"
+}

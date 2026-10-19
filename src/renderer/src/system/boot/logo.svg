@@ -1,0 +1,88 @@
+<svg version="1.2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="48" height="48">
+	<defs>
+		<linearGradient id="g1" x2="1" gradientUnits="userSpaceOnUse" gradientTransform="matrix(-16.519,6.843,-5.934,-14.326,27.105,8.831)">
+			<stop offset="0" stop-color="#009999"/>
+			<stop offset=".515" stop-color="#009797"/>
+			<stop offset=".7" stop-color="#009090"/>
+			<stop offset=".833" stop-color="#008585"/>
+			<stop offset=".939" stop-color="#007474"/>
+			<stop offset="1" stop-color="#006666"/>
+		</linearGradient>
+		<linearGradient id="g2" x2="1" gradientUnits="userSpaceOnUse" gradientTransform="matrix(-6.912,16.687,-14.473,-5.995,15.613,10.734)">
+			<stop offset="0" stop-color="#0066cc"/>
+			<stop offset=".515" stop-color="#0064ca"/>
+			<stop offset=".7" stop-color="#005dc3"/>
+			<stop offset=".833" stop-color="#0052b8"/>
+			<stop offset=".939" stop-color="#0041a7"/>
+			<stop offset="1" stop-color="#003399"/>
+		</linearGradient>
+		<linearGradient id="g3" x2="1" gradientUnits="userSpaceOnUse" gradientTransform="matrix(16.568,6.664,-5.722,14.226,11.195,32.78)">
+			<stop offset="0" stop-color="#cc3333"/>
+			<stop offset=".515" stop-color="#ca3131"/>
+			<stop offset=".7" stop-color="#c32a2a"/>
+			<stop offset=".833" stop-color="#b81f1f"/>
+			<stop offset=".939" stop-color="#a70e0e"/>
+			<stop offset="1" stop-color="#990000"/>
+		</linearGradient>
+		<linearGradient id="g4" x2="1" gradientUnits="userSpaceOnUse" gradientTransform="matrix(15.848,-6.483,5.673,13.867,21.408,38.913)">
+			<stop offset="0" stop-color="#ff9933"/>
+			<stop offset=".515" stop-color="#fd9731"/>
+			<stop offset=".7" stop-color="#f6902a"/>
+			<stop offset=".833" stop-color="#eb851f"/>
+			<stop offset=".939" stop-color="#da740e"/>
+			<stop offset="1" stop-color="#cc6600"/>
+		</linearGradient>
+		<linearGradient id="g5" x2="1" gradientUnits="userSpaceOnUse" gradientTransform="matrix(-17.948,-7.434,6.448,-15.566,37.041,15.518)">
+			<stop offset="0" stop-color="#009933"/>
+			<stop offset=".515" stop-color="#009731"/>
+			<stop offset=".7" stop-color="#00902a"/>
+			<stop offset=".833" stop-color="#00851f"/>
+			<stop offset=".939" stop-color="#00740e"/>
+			<stop offset="1" stop-color="#006600"/>
+		</linearGradient>
+		<linearGradient id="g6" x2="1" gradientUnits="userSpaceOnUse" gradientTransform="matrix(7.023,-16.026,14.478,6.344,32.404,36.722)">
+			<stop offset="0" stop-color="#ffcc00"/>
+			<stop offset=".515" stop-color="#fdca00"/>
+			<stop offset=".7" stop-color="#f6c300"/>
+			<stop offset=".833" stop-color="#ebb800"/>
+			<stop offset=".939" stop-color="#daa700"/>
+			<stop offset="1" stop-color="#cc9900"/>
+		</linearGradient>
+		<linearGradient id="g7" x2="1" gradientUnits="userSpaceOnUse" gradientTransform="matrix(-6.483,-15.666,13.596,-5.626,39.129,27.022)">
+			<stop offset="0" stop-color="#99cc33"/>
+			<stop offset=".515" stop-color="#97ca31"/>
+			<stop offset=".7" stop-color="#90c32a"/>
+			<stop offset=".833" stop-color="#85b81f"/>
+			<stop offset=".939" stop-color="#74a70e"/>
+			<stop offset="1" stop-color="#669900"/>
+		</linearGradient>
+		<linearGradient id="g8" x2="1" gradientUnits="userSpaceOnUse" gradientTransform="matrix(6.663,16.746,-14.94,5.945,8.946,20.817)">
+			<stop offset="0" stop-color="#993399"/>
+			<stop offset=".515" stop-color="#973197"/>
+			<stop offset=".7" stop-color="#902a90"/>
+			<stop offset=".833" stop-color="#851f85"/>
+			<stop offset=".939" stop-color="#740e74"/>
+			<stop offset="1" stop-color="#660066"/>
+		</linearGradient>
+	</defs>
+	<style>
+		.s0 { fill: url(#g1) } 
+		.s1 { fill: url(#g2) } 
+		.s2 { fill: url(#g3) } 
+		.s3 { fill: url(#g4) } 
+		.s4 { fill: url(#g5) } 
+		.s5 { fill: url(#g6) } 
+		.s6 { fill: url(#g7) } 
+		.s7 { fill: url(#g8) } 
+	</style>
+	<path class="s0" d="m15.87 15.87l-3.37 8.13-4.76-16.26 16.26-6.74z"/>
+	<path class="s1" d="m12.5 24l3.37 8.13-14.87-8.13 6.74-16.26z"/>
+	<path class="s2" d="m32.13 32.13l-8.13 3.37-16.26 4.76 16.26 6.74z"/>
+	<path class="s3" d="m35.5 24l-3.37 8.13-8.13 14.87 16.26-6.74z"/>
+	<path class="s4" d="m15.87 15.87l8.13-3.37 16.26-4.76-16.26-6.74z"/>
+	<path class="s5" d="m35.5 24l-3.37-8.13 14.87 8.13-6.74 16.26z"/>
+	<path class="s6" d="m32.13 15.87l-8.13-3.37 16.26-4.76 6.74 16.26z"/>
+	<path class="s7" d="m24 35.5l-8.13-3.37-14.87-8.13 6.74 16.26z"/>
+	<g id="Layer 1">
+	</g>
+</svg>

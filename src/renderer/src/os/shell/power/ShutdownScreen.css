@@ -1,0 +1,32 @@
+.shutdown {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-lock);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-4);
+  background: var(--color-boot-bg);
+  color: var(--color-boot-text);
+}
+
+.shutdown__text {
+  margin: 0;
+  font-size: var(--font-size-large);
+}
+
+.shutdown__spinner {
+  width: 28px;
+  height: 28px;
+  border: 3px solid var(--color-boot-track);
+  border-top-color: var(--color-boot-fill);
+  border-radius: 50%;
+  animation: shutdown-spin 0.9s linear infinite;
+}
+
+@keyframes shutdown-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}

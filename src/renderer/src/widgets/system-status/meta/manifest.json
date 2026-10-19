@@ -1,0 +1,12 @@
+{
+  "id": "system-status",
+  "name": "Estado del sistema",
+  "description": "Batería y espacio usado.",
+  "icon": "icon.svg",
+  "sizes": [
+    "small",
+    "medium"
+  ],
+  "defaultSize": "medium",
+  "ownerApp": null
+}

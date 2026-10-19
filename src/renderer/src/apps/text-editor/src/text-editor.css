@@ -1,0 +1,106 @@
+.text-editor {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  background: var(--color-surface);
+  outline: none;
+}
+
+.text-editor__file {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--color-text-secondary);
+}
+
+.text-editor__find {
+  display: flex;
+  flex: none;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  border-bottom: 1px solid var(--color-separator);
+  background: var(--color-surface-alt);
+}
+
+.text-editor__find-input {
+  flex: 1;
+  min-width: 0;
+}
+
+.text-editor__find-count {
+  min-width: 72px;
+  text-align: right;
+  font-size: var(--font-size-small);
+  color: var(--color-text-secondary);
+}
+
+/* El texto real va sobre una capa idéntica y transparente que pinta las coincidencias de la búsqueda. */
+.text-editor__surface {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+}
+
+.text-editor__layer {
+  position: absolute;
+  inset: 0;
+  margin: 0;
+  padding: var(--space-3) var(--space-4);
+  border: none;
+  font-family: var(--font-mono);
+  font-size: var(--editor-font-size);
+  line-height: 1.5;
+  white-space: pre-wrap;
+  overflow-wrap: break-word;
+  tab-size: 4;
+  scrollbar-gutter: stable;
+}
+
+.text-editor__mirror {
+  overflow: hidden;
+  color: transparent;
+  pointer-events: none;
+}
+
+.text-editor__mirror mark {
+  border-radius: 2px;
+  background: color-mix(in srgb, var(--color-warning) 35%, transparent);
+  color: transparent;
+}
+
+.text-editor__mirror mark[data-current] {
+  background: color-mix(in srgb, var(--color-warning) 75%, transparent);
+}
+
+.text-editor__text {
+  overflow: auto;
+  outline: none;
+  resize: none;
+  background: transparent;
+  color: var(--color-text);
+  user-select: text;
+}
+
+.text-editor__status {
+  display: flex;
+  flex: none;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  min-height: 28px;
+  padding: 0 var(--space-3);
+  border-top: 1px solid var(--color-separator);
+  background: var(--color-surface-alt);
+  font-size: var(--font-size-small);
+  color: var(--color-text-secondary);
+}
+
+.text-editor__size {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+}

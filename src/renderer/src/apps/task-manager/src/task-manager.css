@@ -1,0 +1,198 @@
+.task-manager {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  background: var(--color-surface);
+}
+
+.task-manager__panel {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.task-manager__bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding: var(--space-2) var(--space-3);
+  border-bottom: 1px solid var(--color-separator);
+}
+
+.task-manager__summary {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-4);
+  color: var(--color-text-secondary);
+  font-variant-numeric: tabular-nums;
+}
+
+.task-manager__summary strong {
+  color: var(--color-text);
+  font-weight: var(--font-weight-medium);
+}
+
+.task-manager__scroll {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+}
+
+.task-manager__table {
+  width: 100%;
+  border-collapse: collapse;
+  font-variant-numeric: tabular-nums;
+}
+
+.task-manager__table th {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  padding: 0;
+  border-bottom: 1px solid var(--color-separator);
+  background: var(--color-surface);
+  text-align: left;
+}
+
+.task-manager__sort {
+  width: 100%;
+  padding: 5px var(--space-3);
+  border: none;
+  background: none;
+  color: var(--color-text-secondary);
+  font-weight: var(--font-weight-medium);
+  text-align: inherit;
+  cursor: default;
+}
+
+.task-manager__sort:hover {
+  color: var(--color-text);
+}
+
+.task-manager__table .task-manager__number,
+.task-manager__table th.task-manager__number {
+  text-align: right;
+}
+
+.task-manager__table td {
+  padding: 4px var(--space-3);
+  color: var(--color-text-secondary);
+  white-space: nowrap;
+}
+
+.task-manager__table tbody tr[aria-selected='true'] {
+  background: var(--color-accent);
+}
+
+.task-manager__table tbody tr[aria-selected='true'] td {
+  color: var(--color-on-accent);
+}
+
+.task-manager__name {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  color: var(--color-text);
+}
+
+.task-manager__table tbody tr[aria-selected='true'] .task-manager__name {
+  color: inherit;
+}
+
+.task-manager__system-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  color: var(--color-text-tertiary);
+}
+
+.task-manager__table tbody tr[aria-selected='true'] .task-manager__system-icon {
+  color: inherit;
+}
+
+.task-manager__charts {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: var(--space-4);
+  min-height: 0;
+  padding: var(--space-4);
+  overflow-y: auto;
+}
+
+.task-manager__chart {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: var(--space-2);
+  min-height: 120px;
+}
+
+.task-manager__chart-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+}
+
+.task-manager__chart-title {
+  font-weight: var(--font-weight-semibold);
+}
+
+.task-manager__chart-value {
+  font-size: var(--font-size-large);
+  font-variant-numeric: tabular-nums;
+}
+
+.task-manager__plot {
+  flex: 1;
+  min-height: 80px;
+  border: 1px solid var(--color-separator);
+  border-radius: var(--radius-control);
+  background: var(--color-surface-alt);
+}
+
+.task-manager__plot svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.task-manager__grid-line {
+  stroke: var(--color-separator);
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+}
+
+.task-manager__area {
+  fill: currentColor;
+  opacity: 0.18;
+}
+
+.task-manager__line {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linejoin: round;
+  vector-effect: non-scaling-stroke;
+}
+
+.task-manager__chart--cpu {
+  color: var(--color-accent);
+}
+
+.task-manager__chart--memory {
+  color: var(--color-success);
+}
+
+.task-manager__axis {
+  display: flex;
+  justify-content: space-between;
+  font-size: var(--font-size-small);
+  color: var(--color-text-tertiary);
+}

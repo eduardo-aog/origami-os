@@ -1,0 +1,23 @@
+.quick-note {
+  width: 100%;
+  height: 100%;
+  padding: 22px 6px 6px;
+}
+
+.quick-note__text {
+  display: block;
+  width: 100%;
+  height: 100%;
+  padding: var(--space-2) var(--space-3);
+  border: none;
+  outline: none;
+  resize: none;
+  background: transparent;
+  color: var(--color-chrome-text);
+  line-height: 1.45;
+  user-select: text;
+}
+
+.quick-note__text::placeholder {
+  color: var(--color-text-tertiary);
+}
