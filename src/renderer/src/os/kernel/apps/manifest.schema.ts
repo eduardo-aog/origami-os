@@ -7,6 +7,7 @@ export const APP_PERMISSIONS = [
   'microphone',
   'settings:write',
   'system:processes',
+  'system:peripherals',
   'system:account',
   'python'
 ] as const

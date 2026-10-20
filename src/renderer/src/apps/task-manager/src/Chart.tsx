@@ -9,10 +9,13 @@ export interface ChartProps {
   values: number[]
   /** Valor que corresponde a la parte alta de la gráfica. */
   max: number
-  tone: 'cpu' | 'memory'
+  tone: 'cpu' | 'memory' | 'disk'
   /** Cuántos segundos abarca la gráfica. */
   seconds: number
 }
+
+/** Segundos de historia que guarda el sistema (una muestra por segundo). */
+export const HISTORY_SECONDS = 60
 
 /** Gráfica de línea dibujada en SVG, sin librerías. */
 export function Chart({ title, valueLabel, values, max, tone, seconds }: ChartProps) {

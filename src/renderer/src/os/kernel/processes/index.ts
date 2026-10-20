@@ -1,142 +1,274 @@
-import { createStore } from 'zustand/vanilla'
 import { getApp } from '../apps'
 import { osConfig } from '../config'
 import { on } from '../events'
+import { notifications } from '../notifications'
+import { SYSTEM_DISK_MB, getFilesMB, watchDisk } from './disk'
+import * as engine from './engine'
+import {
+  SYSTEM_PROCESSES,
+  appGenerator,
+  driverGenerator,
+  hash,
+  labGenerators,
+  testGenerator,
+  testName,
+  withStartDelay,
+  type TestProfile
+} from './profiles'
+import { syncResources } from './resources'
+import type { SystemSnapshot } from './types'
 
-export interface ProcessInfo {
-  pid: number
-  name: string
-  /** `null` en los procesos ficticios del sistema. */
-  appId: string | null
-  instanceId: string | null
-  startedAt: number
-  /** Uso de CPU simulado, en porcentaje con un decimal. */
-  cpu: number
-  /** Memoria simulada, en MB. */
-  memoryMB: number
-}
-
-interface SystemProcessSpec {
-  pid: number
-  name: string
-  cpuBase: number
-  cpuSwing: number
-  memoryMB: number
-}
-
-interface AppInstance {
-  pid: number
-  appId: string
-  instanceId: string
-  name: string
-  startedAt: number
-}
-
-// Procesos ficticios que dan realismo al Administrador de tareas.
-const SYSTEM_PROCESSES: readonly SystemProcessSpec[] = [
-  { pid: 1, name: 'Núcleo', cpuBase: 1.2, cpuSwing: 0.8, memoryMB: 180 },
-  { pid: 12, name: 'WindowServer', cpuBase: 3.5, cpuSwing: 2.5, memoryMB: 420 },
-  { pid: 18, name: 'Dock', cpuBase: 0.6, cpuSwing: 0.5, memoryMB: 95 },
-  { pid: 24, name: 'Servicios', cpuBase: 0.9, cpuSwing: 0.7, memoryMB: 140 },
-  { pid: 31, name: 'Almacenamiento', cpuBase: 0.4, cpuSwing: 0.6, memoryMB: 110 },
-  { pid: 37, name: 'Sonido', cpuBase: 0.3, cpuSwing: 0.3, memoryMB: 64 },
-  { pid: 52, name: 'Programador', cpuBase: 0.1, cpuSwing: 0.2, memoryMB: 36 }
-]
+export { TEST_LABELS } from './profiles'
+export type { TestProfile } from './profiles'
+export type {
+  DeadlockInfo,
+  DiskInfo,
+  ProcessInfo,
+  ProcessKind,
+  ProcessState,
+  SyncResourceInfo,
+  SystemSnapshot,
+  Transition
+} from './types'
 
 /** Memoria que el sistema reserva además de los procesos listados, en MB. */
-const RESERVED_MEMORY_MB = 1800
-const FIRST_APP_PID = 1000
+const RESERVED_MEMORY_MB = 3500
+const FIRST_PID = 1000
+/** Duración de un tick a velocidad 1x. */
+const TICK_MS = 500
+const HISTORY_SECONDS = 60
+const MAX_TEST_PROCESSES = 12
+const NOTIFICATION_APP = 'task-manager'
 
-const store = createStore<{ instances: readonly AppInstance[] }>(() => ({ instances: [] }))
-const bootedAt = Date.now()
-let nextPid = FIRST_APP_PID
+export const SPEEDS = [1, 2, 4] as const
+
+const listeners = new Set<() => void>()
+const history = { cpu: [] as number[], memory: [] as number[], disk: [] as number[] }
+let nextPid = FIRST_PID
+let testCount = 0
+let paused = false
+let speed = 1
+let tickTimer: ReturnType<typeof setInterval> | undefined
 let initialized = false
+let snapshot: SystemSnapshot | null = null
+let announcedDeadlock = false
 
-/** Hash estable de un texto: la misma app siempre tiene la misma "personalidad". */
-function hash(text: string): number {
-  let value = 2166136261
-  for (let i = 0; i < text.length; i++) value = Math.imul(value ^ text.charCodeAt(i), 16777619)
-  return value >>> 0
+const pushSample = (series: number[], value: number) => {
+  series.push(value)
+  if (series.length > HISTORY_SECONDS) series.shift()
 }
 
-/** Onda suave y determinista entre 0 y 1. */
-function wave(seed: number, timeMs: number, periodSeconds: number): number {
-  const t = timeMs / 1000 / periodSeconds + (seed % 997) / 997
-  return (Math.sin(t * 2 * Math.PI) + 0.5 * Math.sin(t * 5.3 * Math.PI + seed)) / 3 + 0.5
-}
+/** Siempre `HISTORY_SECONDS` valores; si aún hay poca historia se rellena por la izquierda con la muestra más antigua. */
+const padded = (series: number[]) =>
+  series.length === 0
+    ? Array.from({ length: HISTORY_SECONDS }, () => 0)
+    : [...Array.from({ length: HISTORY_SECONDS - series.length }, () => series[0] ?? 0), ...series]
 
-const round1 = (n: number) => Math.round(n * 10) / 10
-
-function systemProcess(spec: SystemProcessSpec, now: number): ProcessInfo {
+function build(): SystemSnapshot {
+  const state = engine.readState(Date.now())
+  const cycle = engine.findDeadlock()
+  const memoryTotalMB = osConfig.simulatedMemoryMB
+  const filesMB = Math.round(getFilesMB())
   return {
-    pid: spec.pid,
-    name: spec.name,
-    appId: null,
-    instanceId: null,
-    startedAt: bootedAt,
-    cpu: round1(Math.max(0, spec.cpuBase + (wave(spec.pid, now, 11) - 0.5) * 2 * spec.cpuSwing)),
-    memoryMB: Math.round(spec.memoryMB * (0.97 + wave(spec.pid, now, 90) * 0.06))
+    tick: state.tick,
+    paused,
+    speed,
+    cores: engine.CORES,
+    quantumTicks: engine.QUANTUM_TICKS,
+    processes: state.processes,
+    readyQueue: state.readyQueue,
+    coreSlots: state.coreSlots,
+    resources: syncResources.info(engine.nameOf),
+    transitions: state.transitions,
+    deadlock: cycle ? { pids: cycle, names: cycle.map(engine.nameOf) } : null,
+    labActive: engine.hasKey('lab:a') || engine.hasKey('lab:b'),
+    cpu: state.cpu,
+    memoryUsedMB: Math.min(memoryTotalMB, RESERVED_MEMORY_MB + state.memoryProcessesMB),
+    memoryTotalMB,
+    disk: {
+      totalMB: osConfig.simulatedDiskMB,
+      usedMB: Math.min(osConfig.simulatedDiskMB, SYSTEM_DISK_MB + filesMB),
+      filesMB,
+      readMBps: state.diskReadMBps,
+      writeMBps: state.diskWriteMBps
+    },
+    history: { cpu: padded(history.cpu), memory: padded(history.memory), disk: padded(history.disk) }
   }
 }
 
-function appProcess(instance: AppInstance, now: number): ProcessInfo {
-  const seed = hash(instance.appId)
-  const baseMemory = 70 + (seed % 230)
-  const ageSeconds = (now - instance.startedAt) / 1000
-  return {
-    pid: instance.pid,
-    name: instance.name,
-    appId: instance.appId,
-    instanceId: instance.instanceId,
-    startedAt: instance.startedAt,
-    cpu: round1(Math.max(0.1, 0.4 + wave(instance.pid, now, 7) * (1 + (seed % 5)))),
-    memoryMB: Math.round(baseMemory * (1 + Math.min(ageSeconds / 600, 0.25)) * (0.97 + wave(seed, now, 60) * 0.06))
+function refresh(): void {
+  snapshot = build()
+  const deadlocked = snapshot.deadlock !== null
+  if (deadlocked && !announcedDeadlock) {
+    notifications.post({
+      appId: NOTIFICATION_APP,
+      title: 'Interbloqueo detectado',
+      body: snapshot.deadlock?.names.join(' y '),
+      launchArgs: { section: 'sync' }
+    })
   }
+  announcedDeadlock = deadlocked
+  for (const listener of [...listeners]) listener()
+}
+
+function restartTimer(): void {
+  clearInterval(tickTimer)
+  tickTimer = undefined
+  if (paused) return
+  tickTimer = setInterval(() => {
+    engine.tick()
+    refresh()
+  }, TICK_MS / speed)
+}
+
+function sample(): void {
+  if (!snapshot) return
+  pushSample(history.cpu, snapshot.cpu)
+  pushSample(history.memory, snapshot.memoryUsedMB)
+  pushSample(history.disk, snapshot.disk.readMBps + snapshot.disk.writeMBps)
+  refresh()
+}
+
+function spawnApp(appId: string, instanceId: string): void {
+  const app = getApp(appId)
+  const seed = hash(appId)
+  engine.spawn({
+    pid: nextPid++,
+    name: app?.manifest.name ?? appId,
+    kind: 'app',
+    appId,
+    instanceId,
+    key: `instance:${instanceId}`,
+    baseMemoryMB: 70 + (seed % 230),
+    grows: true,
+    generate: appGenerator(app?.manifest.category, seed)
+  })
 }
 
 export const processes = {
-  /** Empieza a seguir `app:launched` y `app:terminated`. Es seguro llamarla varias veces. */
+  /** Arranca el planificador y empieza a seguir las apps y los periféricos. Es seguro llamarla varias veces. */
   init(): void {
     if (initialized) return
     initialized = true
+    for (const spec of SYSTEM_PROCESSES) {
+      engine.spawn({
+        pid: spec.pid,
+        name: spec.name,
+        kind: 'system',
+        baseMemoryMB: spec.memoryMB,
+        generate: withStartDelay(spec.generate)
+      })
+    }
     on('app:launched', ({ appId, instanceId }) => {
-      const instance: AppInstance = {
-        pid: nextPid++,
-        appId,
-        instanceId,
-        name: getApp(appId)?.manifest.name ?? appId,
-        startedAt: Date.now()
-      }
-      store.setState((state) => ({ instances: [...state.instances, instance] }))
+      spawnApp(appId, instanceId)
+      refresh()
     })
     on('app:terminated', ({ instanceId }) => {
-      store.setState((state) => ({
-        instances: state.instances.filter((instance) => instance.instanceId !== instanceId)
-      }))
+      engine.terminateByKey(`instance:${instanceId}`, 'La aplicación se cerró')
+      refresh()
     })
+    on('peripheral:connected', ({ id, name }) => {
+      engine.spawn({
+        pid: nextPid++,
+        name: `Controlador: ${name}`,
+        kind: 'driver',
+        key: `device:${id}`,
+        baseMemoryMB: 24 + (hash(id) % 24),
+        generate: driverGenerator
+      })
+      refresh()
+    })
+    on('peripheral:disconnected', ({ id }) => {
+      engine.terminateByKey(`device:${id}`, 'El dispositivo se desconectó')
+      refresh()
+    })
+    watchDisk(refresh)
+    refresh()
+    restartTimer()
+    setInterval(sample, 1000)
   },
 
-  /** Procesos del sistema y de las apps abiertas, con las métricas simuladas del instante `now`. */
-  list(now = Date.now()): ProcessInfo[] {
-    return [
-      ...SYSTEM_PROCESSES.map((spec) => systemProcess(spec, now)),
-      ...store.getState().instances.map((instance) => appProcess(instance, now))
-    ]
+  /** Estado completo de la simulación; el objeto cambia en cada tick, así que sirve para `useSyncExternalStore`. */
+  getSnapshot(): SystemSnapshot {
+    snapshot ??= build()
+    return snapshot
   },
 
-  /** Totales del sistema: CPU en porcentaje y memoria usada y total en MB. */
-  stats(now = Date.now()): { cpu: number; memoryUsedMB: number; memoryTotalMB: number } {
-    const list = processes.list(now)
-    const memoryTotalMB = osConfig.simulatedMemoryMB
-    return {
-      cpu: round1(Math.min(100, list.reduce((sum, p) => sum + p.cpu, 0))),
-      memoryUsedMB: Math.min(memoryTotalMB, RESERVED_MEMORY_MB + list.reduce((sum, p) => sum + p.memoryMB, 0)),
-      memoryTotalMB
+  subscribe(listener: () => void): () => void {
+    listeners.add(listener)
+    return () => {
+      listeners.delete(listener)
     }
   },
 
-  /** Avisa cuando se abre o se cierra una instancia de app. */
-  subscribe(listener: () => void): () => void {
-    return store.subscribe(() => listener())
+  setPaused(value: boolean): void {
+    paused = value
+    restartTimer()
+    refresh()
+  },
+
+  setSpeed(value: number): void {
+    speed = value
+    restartTimer()
+    refresh()
+  },
+
+  /** Avanza un solo tick con la simulación en pausa. */
+  step(): void {
+    engine.tick()
+    refresh()
+  },
+
+  /** Crea un proceso de prueba para ver cómo se reparte la CPU. Devuelve `false` si ya hay demasiados. */
+  spawnTest(profile: TestProfile): boolean {
+    if (engine.countKind('test') >= MAX_TEST_PROCESSES) return false
+    testCount++
+    engine.spawn({
+      pid: nextPid++,
+      name: testName(profile, testCount),
+      kind: 'test',
+      baseMemoryMB: 24,
+      generate: testGenerator(profile)
+    })
+    refresh()
+    return true
+  },
+
+  /** Termina un proceso de prueba o un hilo del laboratorio. Los demás procesos no se pueden terminar desde aquí. */
+  terminateTest(pid: number): void {
+    if (engine.kindOf(pid) !== 'test') return
+    engine.terminate(pid, 'Terminado por el usuario')
+    refresh()
+  },
+
+  /** Crea los dos hilos que se piden los recursos A y B en orden contrario. */
+  startDeadlockLab(): void {
+    for (const side of ['a', 'b'] as const) {
+      if (engine.hasKey(`lab:${side}`)) continue
+      engine.spawn({
+        pid: nextPid++,
+        name: `Hilo ${side.toUpperCase()}`,
+        kind: 'test',
+        key: `lab:${side}`,
+        baseMemoryMB: 12,
+        generate: labGenerators[side]
+      })
+    }
+    refresh()
+  },
+
+  stopDeadlockLab(): void {
+    engine.terminateByKey('lab:a', 'Laboratorio detenido')
+    engine.terminateByKey('lab:b', 'Laboratorio detenido')
+    refresh()
+  },
+
+  /** Rompe el interbloqueo terminando a uno de los procesos del ciclo; el otro recibe su recurso y sigue. */
+  resolveDeadlock(): void {
+    const cycle = engine.findDeadlock()
+    const victim = cycle ? Math.max(...cycle) : undefined
+    if (victim === undefined) return
+    engine.terminate(victim, 'Terminado para romper el interbloqueo')
+    refresh()
   }
 }

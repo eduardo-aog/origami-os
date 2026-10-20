@@ -15,6 +15,10 @@ El nombre "OrigamiOS" es el predeterminado y se cambia en un solo archivo (`src/
 - Barra de menú, Dock con ampliación, Launchpad, escritorio con íconos, menús contextuales, notificaciones y alarmas.
 - Sistema de archivos virtual con papelera, importación desde el equipo anfitrión y asociaciones de archivos.
 - Tema claro, oscuro o automático, colores de acento y fondos de pantalla.
+- Simulación de procesos y periféricos, visible en el Administrador de tareas:
+  - Cada proceso pasa por los estados Nuevo, Listo, En ejecución, En espera y Terminado; la CPU se reparte entre núcleos con planificación *round-robin*.
+  - El bus del disco, el audio y la pantalla se protegen con mutex y semáforos, y hay un laboratorio de interbloqueo.
+  - Los periféricos ficticios (teclado, mouse, audífonos, memorias USB…) se conectan y desconectan, y cada uno crea el proceso de su controlador.
 
 **Aplicaciones**
 
@@ -26,6 +30,8 @@ El nombre "OrigamiOS" es el predeterminado y se cambia en un solo archivo (`src/
 | Multimedia | Visor de imágenes, Música, Videos, Paint, Cámara, Grabadora de voz |
 
 **Widgets:** Calendario, Reloj, Nota rápida y Estado del sistema.
+
+El **Administrador de tareas** tiene cinco pestañas: Procesos (con forzar cierre), Estados (colas, núcleos y registro de transiciones, con pausa, paso a paso y procesos de prueba), Sincronización, Rendimiento (CPU, memoria y disco) y Periféricos. Las cifras de CPU, memoria y disco son simuladas; solo el espacio de tus archivos es real.
 
 La Terminal incluye comandos de archivos y ejecuta programas de Python (`python` o `python3`) con Pyodide, solo con la biblioteca estándar y sin red.
 
@@ -96,7 +102,7 @@ Las dependencias entre capas están fijadas y las comprueba `npm run lint`:
 
 ## Personalización sin tocar el código
 
-Para añadir una aplicación basta con crear una carpeta en `apps/<id>/` con su `meta/manifest.json` y su `src/index.tsx`: el sistema la registra solo, sin listas escritas a mano. Con los archivos de `meta/` y `system/` se cambian nombres, descripciones, íconos, portadas, colores, fondos, sonidos y valores iniciales. Los cambios en `system/os.config.json`, en `meta/` y en `system/` se ven al reiniciar `npm run dev` o al volver a ejecutar `npm run build`.
+Para añadir una aplicación basta con crear una carpeta en `apps/<id>/` con su `meta/manifest.json` y su `src/index.tsx`: el sistema la registra solo, sin listas escritas a mano. Con los archivos de `meta/` y `system/` se cambian nombres, descripciones, íconos, portadas, colores, fondos, sonidos y valores iniciales. En `system/os.config.json` también se fijan los recursos simulados (`simulatedMemoryMB`, `simulatedDiskMB` y `simulatedCores`, de 1 a 8 núcleos). Los cambios en `system/os.config.json`, en `meta/` y en `system/` se ven al reiniciar `npm run dev` o al volver a ejecutar `npm run build`.
 
 ## Tecnología
 

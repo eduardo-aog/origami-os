@@ -1,7 +1,7 @@
 {
   "id": "task-manager",
   "name": "Administrador de tareas",
-  "description": "Consulta los procesos en ejecución y el rendimiento del sistema.",
+  "description": "Consulta los procesos, sus estados, la sincronización, el rendimiento y los periféricos conectados.",
   "version": "1.0.0",
   "author": "",
   "icon": "icon.svg",
@@ -14,15 +14,16 @@
     "pinnedByDefault": false
   },
   "window": {
-    "width": 760,
-    "height": 500,
-    "minWidth": 520,
-    "minHeight": 340,
+    "width": 900,
+    "height": 580,
+    "minWidth": 680,
+    "minHeight": 400,
     "resizable": true,
     "singleInstance": true
   },
   "fileAssociations": [],
   "permissions": [
-    "system:processes"
+    "system:processes",
+    "system:peripherals"
   ]
 }

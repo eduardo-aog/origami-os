@@ -12,6 +12,7 @@ import {
 import { useFsFolder } from '../kernel/fs/hooks'
 import type { FsNode } from '../kernel/fs'
 import { menus, type AppMenu } from '../kernel/menus'
+import { peripherals } from '../kernel/peripherals'
 import { processes } from '../kernel/processes'
 import { session, type SessionUser } from '../kernel/session'
 import { useSession } from '../kernel/session/hooks'
@@ -79,12 +80,20 @@ export function useUnsavedChanges(options: UnsavedOptions): { confirmDiscard: ()
 }
 
 export interface ProcessesApi {
-  list: typeof processes.list
-  stats: typeof processes.stats
+  /** Estado de la simulación; cambia en cada tick. Está pensado para `useSyncExternalStore`. */
+  getSnapshot: typeof processes.getSnapshot
   subscribe: typeof processes.subscribe
+  setPaused: typeof processes.setPaused
+  setSpeed: typeof processes.setSpeed
+  step: typeof processes.step
+  spawnTest: typeof processes.spawnTest
+  terminateTest: typeof processes.terminateTest
+  startDeadlockLab: typeof processes.startDeadlockLab
+  stopDeadlockLab: typeof processes.stopDeadlockLab
+  resolveDeadlock: typeof processes.resolveDeadlock
   /**
    * Fuerza el cierre de una instancia. Primero avisa de que se pueden perder datos y, si la
-   * ventana tiene cambios sin guardar, pasa por el flujo único de la sección 4.9.
+   * ventana tiene cambios sin guardar, pasa por el flujo único de cambios sin guardar.
    * Devuelve `false` si el usuario canceló.
    */
   forceQuit: (instanceId: string) => Promise<boolean>
@@ -96,9 +105,16 @@ export function useProcesses(): ProcessesApi {
   assertPermission(manifest, 'system:processes')
   return useMemo<ProcessesApi>(
     () => ({
-      list: processes.list,
-      stats: processes.stats,
+      getSnapshot: processes.getSnapshot,
       subscribe: processes.subscribe,
+      setPaused: processes.setPaused,
+      setSpeed: processes.setSpeed,
+      step: processes.step,
+      spawnTest: processes.spawnTest,
+      terminateTest: processes.terminateTest,
+      startDeadlockLab: processes.startDeadlockLab,
+      stopDeadlockLab: processes.stopDeadlockLab,
+      resolveDeadlock: processes.resolveDeadlock,
       async forceQuit(instanceId) {
         const target = windowsStore.byInstance(instanceId)
         if (!target || target.closing) return false
@@ -117,6 +133,30 @@ export function useProcesses(): ProcessesApi {
     }),
     [windowId]
   )
+}
+
+export interface PeripheralsApi {
+  catalog: typeof peripherals.catalog
+  getSnapshot: typeof peripherals.getSnapshot
+  subscribe: typeof peripherals.subscribe
+  /** Lanza un error en español si el dispositivo ya está conectado o no queda un puerto libre. */
+  connect: (modelId: string) => void
+  disconnect: typeof peripherals.disconnect
+}
+
+/** Requiere el permiso `system:peripherals`. */
+export function usePeripherals(): PeripheralsApi {
+  const { manifest } = useAppInstance()
+  assertPermission(manifest, 'system:peripherals')
+  return {
+    catalog: peripherals.catalog,
+    getSnapshot: peripherals.getSnapshot,
+    subscribe: peripherals.subscribe,
+    connect(modelId) {
+      peripherals.connect(modelId)
+    },
+    disconnect: peripherals.disconnect
+  }
 }
 
 export interface AccountApi {

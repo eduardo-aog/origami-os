@@ -1,3 +1,4 @@
+import type { PeripheralKind } from '../peripherals/catalog'
 import type { SettingKey } from '../settings/schema'
 
 type Empty = Record<string, never>
@@ -30,6 +31,8 @@ export interface EventMap {
   'notification:posted': { id: string; appId: string }
   'media:active': { camera: boolean; microphone: boolean }
   'scheduler:fired': { jobId: string; appId: string }
+  'peripheral:connected': { id: string; name: string; kind: PeripheralKind }
+  'peripheral:disconnected': { id: string; name: string; kind: PeripheralKind }
 }
 
 export type EventName = keyof EventMap

@@ -9,6 +9,8 @@ export const osConfigSchema = z
     bootDurationMs: z.number().int().min(0),
     startFullscreen: z.boolean(),
     simulatedMemoryMB: z.number().int().positive(),
+    simulatedDiskMB: z.number().int().positive(),
+    simulatedCores: z.number().int().min(1).max(8),
     defaults: z
       .object({
         theme: z.enum(['light', 'dark', 'auto']),

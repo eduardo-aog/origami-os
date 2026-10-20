@@ -4,6 +4,8 @@
   "bootDurationMs": 2500,
   "startFullscreen": false,
   "simulatedMemoryMB": 16384,
+  "simulatedDiskMB": 87101,
+  "simulatedCores": 2,
   "defaults": {
     "theme": "light",
     "accent": "#0A84FF",

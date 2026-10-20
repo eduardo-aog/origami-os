@@ -7,12 +7,13 @@ export {
   useFsWatch,
   useLaunchArgs,
   useOpenFileHandler,
+  usePeripherals,
   useProcesses,
   useSetting,
   useSystemVolume,
   useUnsavedChanges
 } from './hooks'
-export type { AccountApi, ProcessesApi } from './hooks'
+export type { AccountApi, PeripheralsApi, ProcessesApi } from './hooks'
 export { useAppearance } from './appearance'
 export type { AppearanceApi } from './appearance'
 
@@ -28,7 +29,27 @@ export type { AppMenu, AppMenuItem } from '../kernel/menus'
 export type { DialogsApi } from '../kernel/dialogs'
 export type { EventData, EventName } from '../kernel/events'
 export type { FsApi, FsNode } from '../kernel/fs'
-export type { ProcessInfo } from '../kernel/processes'
+export type {
+  DeadlockInfo,
+  DiskInfo,
+  ProcessInfo,
+  ProcessKind,
+  ProcessState,
+  SyncResourceInfo,
+  SystemSnapshot,
+  TestProfile,
+  Transition
+} from '../kernel/processes'
+export { TEST_LABELS } from '../kernel/processes'
+export type {
+  ConnectedPeripheral,
+  PeripheralConnection,
+  PeripheralEvent,
+  PeripheralKind,
+  PeripheralModel,
+  PeripheralsSnapshot
+} from '../kernel/peripherals'
+export { KIND_LABELS, USB_PORTS } from '../kernel/peripherals'
 export type { Avatar } from '../kernel/storage'
 export { FsError } from '../kernel/fs'
 export type { NewJob as ScheduleJob, ScheduledJob } from '../kernel/scheduler'
